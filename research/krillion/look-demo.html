@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Babel Climb Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=Noto+Sans:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="design-tokens.css">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    min-height: 100vh;
+    background: var(--night);
+    color: var(--ink);
+    font-family: var(--font-pixel);
+    font-size: 20px;
+    overflow-x: hidden;
+  }
+
+  /* --- scene: dusk ground -> night sky. --alt (0..1) scrolls it as you climb --- */
+  .scene {
+    --alt: 0;
+    position: fixed; inset: 0; z-index: 0;
+    background: linear-gradient(to top,
+      #ffb77a 0%, #e0607e 12%, #5b3a8c 30%, #1d1442 55%, var(--night) 75%, var(--night-deep) 100%);
+    background-size: 100% 300%;
+    background-position: 0 calc(100% - var(--alt) * 100%);
+    transition: background-position var(--climb-ms) var(--ease-climb);
+  }
+  .stars, .scanlines { position: fixed; inset: 0; pointer-events: none; }
+  .stars {
+    z-index: 1;
+    background-image:
+      radial-gradient(2px 2px at 12% 18%, #fff 50%, transparent 51%),
+      radial-gradient(2px 2px at 78% 9%, #fff 50%, transparent 51%),
+      radial-gradient(2px 2px at 44% 32%, #fff8 50%, transparent 51%),
+      radial-gradient(2px 2px at 88% 40%, #fff8 50%, transparent 51%),
+      radial-gradient(2px 2px at 26% 52%, #fff6 50%, transparent 51%),
+      radial-gradient(2px 2px at 63% 22%, #fff 50%, transparent 51%);
+    image-rendering: pixelated;
+  }
+  /* CRT scanlines over everything */
+  .scanlines {
+    z-index: 50;
+    background: repeating-linear-gradient(0deg, rgba(241,236,255,.06) 0 2px, transparent 2px 4px);
+    mix-blend-mode: overlay;
+  }
+  /* pixel tower silhouette built from box-shadows (no image needed) */
+  .tower {
+    position: fixed; bottom: 0; left: 50%; z-index: 1;
+    width: 8px; height: 8px; transform: translateX(-50%) scale(3); transform-origin: bottom;
+    color: #12082a;
+    box-shadow:
+      -16px 0, -8px 0, 0 0, 8px 0, 16px 0,
+      -16px -8px, -8px -8px, 0 -8px, 8px -8px, 16px -8px,
+      -8px -16px, 0 -16px, 8px -16px,
+      -8px -24px, 0 -24px, 8px -24px,
+      0 -32px, 0 -40px;
+    background: currentColor;
+    opacity: .5;
+  }
+
+  main {
+    position: relative; z-index: 2;
+    max-width: 600px; margin: 0 auto; padding: 48px 16px 80px;
+    display: flex; flex-direction: column; gap: 20px; align-items: stretch;
+    text-align: center;
+  }
+
+  /* --- chromatic-aberration wordmark --- */
+  .wordmark {
+    margin: 0;
+    font-size: clamp(64px, 18vw, 124px);
+    line-height: .9;
+    letter-spacing: .04em;
+    color: var(--ink);
+    text-shadow: -3px 3px var(--rose), 3px -2px var(--sky);
+  }
+  .kicker { letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--gold); margin: 0; }
+  .sub { color: var(--ink-muted); letter-spacing: .08em; margin: 0; }
+
+  /* --- HUD --- */
+  .hud { display: flex; justify-content: space-between; text-transform: uppercase; letter-spacing: .15em; font-size: 18px; color: var(--ink-muted); }
+  .hud b { color: var(--gold); font-weight: 400; }
+
+  /* --- prompt card --- */
+  .card {
+    background: var(--panel);
+    border: 2px solid var(--hairline);
+    box-shadow: 0 0 0 3px var(--night), 0 14px 40px rgba(0,0,0,.55);
+    padding: 20px 16px; text-align: left;
+  }
+  .card .lang { color: var(--mint); letter-spacing: var(--tracking-label); text-transform: uppercase; font-size: 16px; }
+  .card h2 { font-weight: 400; font-size: 32px; margin: 8px 0 4px; line-height: 1.1; }
+  .card p { margin: 0; color: var(--ink-muted); }
+
+  /* --- timer bar: stepped like a pixel meter --- */
+  .timer { height: 12px; background: var(--hairline); position: relative; overflow: hidden; }
+  .timer i {
+    position: absolute; inset: 0; transform-origin: left;
+    background: repeating-linear-gradient(90deg, var(--mint) 0 10px, transparent 10px 12px);
+    animation: drain 25s steps(25, end) forwards;
+  }
+  .timer.low i { background: repeating-linear-gradient(90deg, var(--rose) 0 10px, transparent 10px 12px); animation-play-state: running; }
+  @keyframes drain { to { transform: scaleX(0); } }
+
+  /* --- input + buttons --- */
+  input {
+    width: 100%; font: inherit; font-family: var(--font-script-fallback); font-size: 22px;
+    color: var(--ink); background: var(--night-deep);
+    border: 2px solid var(--ink-muted); border-radius: 0; padding: 12px 14px; outline: none;
+  }
+  input:focus { border-color: var(--mint); box-shadow: 0 0 18px rgba(124,245,176,.3); }
+  .btn {
+    font: inherit; font-size: 28px; letter-spacing: .2em; text-transform: uppercase;
+    color: var(--ink); background: #1b1440; border: 0; border-radius: 0;
+    padding: 16px; cursor: pointer; margin: 6px;
+    box-shadow: var(--btn-shadow);
+    transition: transform .08s;
+  }
+  .btn:active { transform: translateY(4px); box-shadow: 0 0 0 3px var(--night), 0 0 0 6px var(--mint), 0 2px 0 6px #2b6b55; }
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+  .btn-ghost {
+    font: inherit; font-size: 16px; letter-spacing: .15em; text-transform: uppercase;
+    color: var(--ink); background: rgba(11,7,24,.85); border: 1px solid var(--ink-muted);
+    padding: 10px 14px; cursor: pointer;
+  }
+  .btn-ghost:hover { border-color: var(--mint); color: var(--mint); }
+
+  /* --- tier stamp result --- */
+  .result { min-height: 120px; display: grid; place-items: center; }
+  .stamp {
+    border: 3px solid var(--tc); color: var(--tc); background: rgba(11,7,24,.85);
+    padding: 8px 18px; font-size: 34px; letter-spacing: .2em; text-transform: uppercase;
+    transform: rotate(-4deg);
+    animation: stamp .42s var(--ease-spring) both;
+  }
+  .stamp small { display: block; font-size: 18px; letter-spacing: .1em; color: var(--ink); }
+  @keyframes stamp { from { transform: rotate(-4deg) scale(2.2); opacity: 0; } to { transform: rotate(-4deg) scale(1); opacity: 1; } }
+  .shake { animation: jolt .3s steps(3) both; }
+  @keyframes jolt { 33% { transform: translateX(-6px); } 66% { transform: translateX(6px); } }
+
+  /* --- tier legend --- */
+  .tiers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; font-size: 16px; }
+  .tiers span { border: 1px solid var(--tc); color: var(--tc); background: rgba(11,7,24,.85); padding: 6px 4px; letter-spacing: .08em; }
+
+  .note { color: var(--ink); font-size: 16px; text-shadow: 0 1px 2px #000; }
+  @media (prefers-reduced-motion: reduce) { * { animation-duration: 0s !important; transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="scene" id="scene"></div>
+<div class="stars"></div>
+<div class="tower"></div>
+<div class="scanlines"></div>
+
+<main>
+  <p class="kicker">The daily climb · #001</p>
+  <h1 class="wordmark">BABEL</h1>
+  <p class="sub">7 phrases · 25 seconds · natural answers climb higher</p>
+
+  <div class="hud"><span>Phrase <b id="round">1</b>/7</span><span>Altitude <b id="alt">0</b> m</span></div>
+
+  <section class="card" id="card">
+    <div class="lang">🇪🇸 Spanish · casual</div>
+    <h2>“I’m running late.”</h2>
+    <p>Text it to a friend. Any natural way counts — rarer, more native phrasing scores more.</p>
+  </section>
+
+  <div class="timer" id="timer"><i></i></div>
+
+  <form id="form">
+    <input id="answer" autocomplete="off" placeholder="Type your answer…" aria-label="Your answer">
+    <div class="btn-row" style="margin-top:18px">
+      <button class="btn" type="submit">Transmit</button>
+    </div>
+  </form>
+
+  <div class="result" id="result" aria-live="polite"></div>
+
+  <div class="tiers">
+    <span style="--tc:var(--tier-phrasebook)">Phrasebook 10</span>
+    <span style="--tc:var(--tier-textbook)">Textbook 15</span>
+    <span style="--tc:var(--tier-conversational)">Convo 30</span>
+    <span style="--tc:var(--tier-native)">Native 60</span>
+    <span style="--tc:var(--tier-regional)">Regional 85</span>
+    <span style="--tc:var(--tier-polyglot)">Polyglot 100</span>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn-ghost" type="button">Play with friends</button>
+    <button class="btn-ghost" type="button">Languages</button>
+    <button class="btn-ghost" type="button">Yesterday’s best finds</button>
+  </div>
+  <p class="note">Try: “llego tarde”, “voy tarde”, “se me hizo tarde”, “ando retrasado”, “voy con el tiempo justo”, “voy pillado”.</p>
+</main>
+
+<script>
+  // Tiny answer bank for the demo. Real game: editor-curated list per prompt + LLM fallback grading.
+  const bank = [
+    { tier: "phrasebook", pts: 10, answers: ["llego tarde", "estoy tarde"] },
+    { tier: "textbook", pts: 15, answers: ["voy a llegar tarde", "estoy retrasado", "estoy retrasada"] },
+    { tier: "conversational", pts: 30, answers: ["voy tarde", "se me hace tarde"] },
+    { tier: "native", pts: 60, answers: ["se me hizo tarde", "voy con retraso", "voy con el tiempo justo"] },
+    { tier: "regional", pts: 85, answers: ["ando retrasado", "ando retrasada", "ando tarde"] },
+    { tier: "polyglot", pts: 100, answers: ["voy pillado", "voy pillada", "voy a las carreras", "voy volando"] },
+  ];
+  const normalise = s => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "")
+    .replace(/[¡!¿?.,"“”']/g, "").replace(/\s+/g, " ").trim();
+
+  const form = document.getElementById("form");
+  const input = document.getElementById("answer");
+  const result = document.getElementById("result");
+  const altEl = document.getElementById("alt");
+  const scene = document.getElementById("scene");
+  let altitude = 0;
+
+  form.addEventListener("submit", e => {
+    e.preventDefault();
+    const guess = normalise(input.value);
+    if (!guess) return;
+    const hit = bank.find(t => t.answers.some(a => normalise(a) === guess));
+    if (!hit) {
+      result.innerHTML = `<div class="stamp" style="--tc:var(--rose)">No signal<small>Not in the list — try another</small></div>`;
+      document.getElementById("card").classList.remove("shake");
+      void document.body.offsetWidth;
+      document.getElementById("card").classList.add("shake");
+      return;
+    }
+    altitude += hit.pts * 10;
+    altEl.textContent = altitude.toLocaleString();
+    scene.style.setProperty("--alt", Math.min(altitude / 7000, 1));
+    result.innerHTML = `<div class="stamp" style="--tc:var(--tier-${hit.tier})">${hit.tier}<small>+${hit.pts} pts · +${hit.pts * 10} m</small></div>`;
+    input.value = "";
+  });
+</script>
+</body>
+</html>
