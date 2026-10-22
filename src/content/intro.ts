@@ -12,10 +12,14 @@ export const DARK_VOICE: Line[] = [
 
 export const WAKE_UP: Line[] = [
   { who: 'self', text: '(Ugh... my head.)' },
-  { who: 'self', text: '(Where... am I?)' },
-  { text: 'You are lying on cold stone. Market stalls. Crates of oranges. Striped awnings.' },
-  { text: 'But it is strangely quiet. Nobody is shouting prices. Nobody is talking at all.' },
-  { who: 'self', text: "(How did I get here? I remember the plane... and then... nothing.)" },
+  { text: "You're lying on your back, staring up at the sky. Planes hang above you, circling, going nowhere." },
+  { text: 'Every few seconds the sky flickers. Red static, like a broken screen.' },
+  { who: 'self', text: '(Where... am I? I remember the plane... landing... and then nothing.)' },
+];
+
+export const SIT_UP: Line[] = [
+  { text: 'You sit up. An airport. The departure boards are scrambled. People wander around, holding dead phones.' },
+  { text: 'Someone says something to you. You can tell it is a question... but none of the words make sense.' },
 ];
 
 export const PHONE_BUZZ: Line[] = [
@@ -96,15 +100,33 @@ export const STORY: Vignette[] = [
 
 export const AFTER_STORY: Line[] = [
   { who: 'omni', text: 'Every person who really speaks a language is a backup ANTI can never erase. Every word you learn is a word it can never take.' },
-  { who: 'self', text: '(...And me? Why can\'t I remember anything?)' },
-  { who: 'omni', text: "You were wearing OMNI earbuds when ANTI's pulse went through the network. The feedback knocked you out cold." },
+  { who: 'self', text: "(...And me? Why can't I remember anything?)" },
+  { who: 'omni', text: "You were wearing OMNI earbuds when ANTI's pulse went through the network. The feedback knocked you out cold, right there on the tarmac." },
   { who: 'omni', text: "Your memories should come back. My own records about you are... corrupted. That's strange. I'll keep digging." },
 ];
 
 export const ASK_NAME = "Let's start with something ANTI can't touch. Do you remember your name?";
 
-export const AFTER_NAME = (name: string): Line[] => [
+export const MISSION = (name: string): Line[] => [
   { who: 'omni', text: `${name}. Good. Hold on to that.` },
-  { who: 'omni', text: "We're in Madrid. Out there, nobody can understand English anymore. Not unless you speak Spanish." },
-  { who: 'omni', text: "I'll teach you as we go. See the woman with the oranges? Let's start with her. Walk up and say hello." },
+  { who: 'omni', text: "Here's the plan. ANTI is weakest wherever people still speak their own language." },
+  { who: 'omni', text: "So we pick one country. We go there, you live there, and you learn to speak like a local. Ordering food, making friends, finding your way." },
+  { who: 'omni', text: "And when ANTI's corrupted legends come for us, you talk them back to who they really are. Free the country's greatest legend, and its network is ours again." },
+  { who: 'omni', text: "Almost every flight is grounded. But I can still route a few. Look at the departures board." },
+];
+
+export const CHOOSE_PROMPT = 'Where do we start?';
+
+export const CONFIRM = (city: string, country: string, language: string): Line[] => [
+  { who: 'omni', text: `${city}, ${country}. ${language}. Are you sure?` },
+  { who: 'omni', text: `Once we land, ANTI will lock the borders behind us. We won't be able to leave ${country} until we free its network. That means restoring its Heart Legend.` },
+];
+
+export const NOT_AVAILABLE = (city: string): Line[] => [
+  { who: 'omni', text: `ANTI has ${city} completely locked down. I can't route a flight there yet. Soon.` },
+];
+
+export const DEPART = (city: string): Line[] => [
+  { who: 'omni', text: `Then it's decided. Next stop: ${city}.` },
+  { text: 'Gate 7. The last plane on the runway. Its engines are already running.' },
 ];

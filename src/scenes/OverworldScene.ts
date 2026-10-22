@@ -4,69 +4,86 @@ import {
   CARMEN_AFTER_ALL, CARMEN_AFTER_ORDER, CARMEN_GREETING, CARMEN_IDLE, CARMEN_MISS, CARMEN_ORDER, CARMEN_REWARD,
   CARMEN_SERVED, CARMEN_SERVED_NATIVE, DUENDE_BATTLE, DUENDE_RESTORED_IDLE, NEED_WORDS, SLOT_EXAMPLES, SLOTS,
 } from '../content/spain/act1';
-import { AFTER_NAME, AFTER_STORY, ASK_NAME, DARK_VOICE, PHONE_BUZZ, WAKE_UP } from '../content/intro';
+import {
+  AFTER_BATTLE, ARRIVAL, ARRIVE_AT, BENCHES, DEAD_STALL, FOUNTAIN, GLITCH_ZONE, LAMPS, MAP_COLS, MAP_ROWS,
+  MARKET_NPCS, PLANTS, STALLS, type MarketNpc,
+} from '../content/spain/market';
 import { fillSlots, grade } from '../engine/grader';
 import { tierRank } from '../engine/tiers';
 import { save, state } from '../state';
 import { ui, type Dir } from '../ui/panel';
 
 const TILE = 16;
-const COLS = 30;
-const ROWS = 17;
-const START = { x: 14, y: 14 };
-const AFTER_BATTLE = { x: 15, y: 6 };
 
 /**
- * W wall, A awning, C counter, F fruit stall (in the glitch zone), G glitch zone,
- * P plant, E entrance, . floor
+ * Tile codes: W wall, A awning, C counter, F the corrupted fruit stall, G glitch zone,
+ * O fountain, B bench, L lamp, P plant, E entrance, . floor
  */
-function buildMap(): string[][] {
-  const grid: string[][] = Array.from({ length: ROWS }, (_, y) =>
-    Array.from({ length: COLS }, (_, x) => (x === 0 || y === 0 || x === COLS - 1 || y === ROWS - 1 ? 'W' : '.')),
+function buildMap(): { grid: string[][]; textures: string[][] } {
+  const grid: string[][] = Array.from({ length: MAP_ROWS }, (_, y) =>
+    Array.from({ length: MAP_COLS }, (_, x) =>
+      x === 0 || y === 0 || x === MAP_COLS - 1 || y === MAP_ROWS - 1 ? 'W' : '.',
+    ),
   );
-  const fill = (x: number, y: number, w: number, h: number, ch: string) => {
-    for (let j = y; j < y + h; j++) for (let i = x; i < x + w; i++) grid[j][i] = ch;
+  const textures: string[][] = grid.map((row) => row.map((ch) => (ch === 'W' ? 't_wall' : 't_floor')));
+  const put = (x: number, y: number, ch: string, tex: string) => {
+    grid[y][x] = ch;
+    textures[y][x] = tex;
   };
-  const stall = (x: number, y: number) => {
-    fill(x, y, 4, 1, 'A');
-    fill(x, y + 1, 4, 1, 'C');
-  };
-  fill(13, 1, 6, 4, 'G');
-  fill(15, 3, 2, 1, 'F');
-  [[5, 3], [22, 3], [8, 7], [19, 7], [5, 11], [19, 11]].forEach(([x, y]) => stall(x, y));
-  [[26, 5], [3, 6], [3, 13], [26, 13]].forEach(([x, y]) => (grid[y][x] = 'P'));
-  fill(14, 16, 2, 1, 'E');
-  return grid;
+
+  for (let y = GLITCH_ZONE.y; y < GLITCH_ZONE.y + GLITCH_ZONE.h; y++) {
+    for (let x = GLITCH_ZONE.x; x < GLITCH_ZONE.x + GLITCH_ZONE.w; x++) put(x, y, 'G', 't_glitch0');
+  }
+  for (let i = 0; i < DEAD_STALL.w; i++) put(DEAD_STALL.x + i, DEAD_STALL.y, 'F', 't_counter_dead');
+  for (const s of STALLS) {
+    for (let i = 0; i < 4; i++) {
+      put(s.x + i, s.y, 'A', `t_awning_${s.type}`);
+      put(s.x + i, s.y + 1, 'C', `t_counter_${s.type}`);
+    }
+  }
+  for (let j = 0; j < 2; j++) for (let i = 0; i < 2; i++) put(FOUNTAIN.x + i, FOUNTAIN.y + j, 'O', 't_floor');
+  BENCHES.forEach(({ x, y }) => put(x, y, 'B', 't_bench'));
+  LAMPS.forEach(({ x, y }) => put(x, y, 'L', 't_lamp'));
+  PLANTS.forEach(({ x, y }) => put(x, y, 'P', 't_plant'));
+  const mid = Math.floor(MAP_COLS / 2) - 1;
+  put(mid, MAP_ROWS - 1, 'E', 't_entrance');
+  put(mid + 1, MAP_ROWS - 1, 'E', 't_entrance');
+  return { grid, textures };
 }
 
-const SOLID = new Set(['W', 'A', 'C', 'F', 'P', 'E']);
+const SOLID = new Set(['W', 'A', 'C', 'F', 'O', 'B', 'L', 'P', 'E']);
 const DELTA: Record<Dir, [number, number]> = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] };
 
 interface Npc {
-  id: 'carmen' | 'duende';
+  id: string;
   x: number;
   y: number;
   sprite: Phaser.GameObjects.Image;
+  def?: MarketNpc;
+  talkIndex: number;
+  busy: boolean;
 }
 
 export class OverworldScene extends Phaser.Scene {
   private map!: string[][];
   private player!: Phaser.GameObjects.Image;
-  private pos = { ...START };
+  private pos = { ...ARRIVE_AT };
   private facing: Dir = 'up';
   private moving = false;
   private scripting = false;
   private npcs: Npc[] = [];
   private glitchTiles: Phaser.GameObjects.Image[] = [];
   private keys!: Record<string, Phaser.Input.Keyboard.Key>;
+  private from = '';
 
   constructor() {
     super('Overworld');
   }
 
   init(data: { from?: string }): void {
-    this.pos = data.from === 'battle' ? { ...AFTER_BATTLE } : { ...START };
-    this.facing = data.from === 'battle' ? 'down' : 'up';
+    this.from = data.from ?? '';
+    this.pos = this.from === 'battle' ? { ...AFTER_BATTLE } : { ...ARRIVE_AT };
+    this.facing = this.from === 'battle' ? 'down' : 'up';
     this.npcs = [];
     this.glitchTiles = [];
     this.moving = false;
@@ -74,16 +91,18 @@ export class OverworldScene extends Phaser.Scene {
   }
 
   create(): void {
-    this.map = buildMap();
-    this.drawMap();
+    const { grid, textures } = buildMap();
+    this.map = grid;
+    this.drawMap(textures);
 
-    this.addNpc('carmen', 9, 9);
-    this.addNpc('duende', 15, 2);
+    this.addNpc('carmen', 'carmen', 9, 9);
+    this.addNpc('duende', state.flags.duendeRestored ? 'duende_true' : 'duende_corrupt', 19, 2);
+    for (const def of MARKET_NPCS) this.addNpc(def.id, def.sprite, def.x, def.y, def);
 
     this.player = this.add.image(0, 0, 'player').setOrigin(0.5, 1);
     this.placePlayer();
     this.cameras.main
-      .setBounds(0, 0, COLS * TILE, ROWS * TILE)
+      .setBounds(0, 0, MAP_COLS * TILE, MAP_ROWS * TILE)
       .setZoom(2)
       .setRoundPixels(true)
       .startFollow(this.player, true, 0.25, 0.25, 0, TILE / 2);
@@ -99,8 +118,10 @@ export class OverworldScene extends Phaser.Scene {
     ui.dpadDir = null;
 
     this.time.addEvent({ delay: 120, loop: true, callback: () => this.animateGlitch() });
+    this.time.addEvent({ delay: 900, loop: true, callback: () => this.wander() });
+    this.cameras.main.fadeIn(500, 0, 0, 0);
 
-    if (!state.flags.prologue) void this.script(() => this.intro());
+    if (!state.flags.arrived) void this.script(() => this.arrive());
     else if (state.flags.duendeRestored && !state.flags.gotPaella) {
       void this.script(() => ui.say([{ who: 'omni', text: 'Carmen will want to hear about this. Go talk to her!' }]));
     } else this.idle();
@@ -109,28 +130,36 @@ export class OverworldScene extends Phaser.Scene {
   // ---------------------------------------------------------------------------
   // Drawing
 
-  private drawMap(): void {
+  private drawMap(textures: string[][]): void {
     const restored = !!state.flags.duendeRestored;
-    for (let y = 0; y < ROWS; y++) {
-      for (let x = 0; x < COLS; x++) {
+    for (let y = 0; y < MAP_ROWS; y++) {
+      for (let x = 0; x < MAP_COLS; x++) {
         const ch = this.map[y][x];
-        const cx = x * TILE + TILE / 2;
-        const cy = y * TILE + TILE / 2;
-        const key = {
-          W: 't_wall', A: 't_awning', C: 't_counter', P: 't_plant', E: 't_entrance', '.': 't_floor',
-          F: restored ? 't_counter' : 't_counter_dead', G: restored ? 't_floor' : 't_glitch0',
-        }[ch]!;
-        const img = this.add.image(cx, cy, key);
+        let key = textures[y][x];
+        if (ch === 'G' && restored) key = 't_floor';
+        if (ch === 'F' && restored) key = 't_counter_fruit';
+        const img = this.add.image(x * TILE + TILE / 2, y * TILE + TILE / 2, key);
         if (ch === 'G' && !restored) this.glitchTiles.push(img);
       }
     }
+    this.add.image((FOUNTAIN.x + 1) * TILE, (FOUNTAIN.y + 1) * TILE, 't_fountain').setDepth(FOUNTAIN.y + 1);
+
+    // Hand-painted signs above each stall, in Spanish.
+    for (const s of STALLS) {
+      this.add
+        .text((s.x + 2) * TILE, s.y * TILE + 1, s.sign, {
+          fontFamily: 'VT323', fontSize: '10px', color: '#f1ecff', backgroundColor: '#1a1026', padding: { x: 2, y: 0 },
+        })
+        .setOrigin(0.5, 1)
+        .setResolution(2)
+        .setDepth(s.y + 0.6);
+    }
   }
 
-  private addNpc(id: Npc['id'], x: number, y: number): void {
-    const key = id === 'duende' ? (state.flags.duendeRestored ? 'duende_true' : 'duende_corrupt') : id;
-    const sprite = this.add.image(x * TILE + TILE / 2, (y + 1) * TILE, key).setOrigin(0.5, 1).setDepth(y);
-    this.tweens.add({ targets: sprite, y: sprite.y - 1, duration: 500, yoyo: true, repeat: -1, ease: 'Stepped' });
-    this.npcs.push({ id, x, y, sprite });
+  private addNpc(id: string, texture: string, x: number, y: number, def?: MarketNpc): void {
+    const sprite = this.add.image(x * TILE + TILE / 2, (y + 1) * TILE, texture).setOrigin(0.5, 1).setDepth(y);
+    this.tweens.add({ targets: sprite, scaleY: 0.96, duration: 500 + Math.random() * 300, yoyo: true, repeat: -1, ease: 'Stepped' });
+    this.npcs.push({ id, x, y, sprite, def, talkIndex: 0, busy: false });
   }
 
   private placePlayer(): void {
@@ -166,6 +195,10 @@ export class OverworldScene extends Phaser.Scene {
     return this.map[y]?.[x] ?? 'W';
   }
 
+  private occupied(x: number, y: number): boolean {
+    return SOLID.has(this.tileAt(x, y)) || this.npcs.some((n) => n.x === x && n.y === y);
+  }
+
   private step(dir: Dir): void {
     this.facing = dir;
     if (dir === 'left') this.player.setFlipX(true);
@@ -174,7 +207,7 @@ export class OverworldScene extends Phaser.Scene {
     const nx = this.pos.x + dx;
     const ny = this.pos.y + dy;
     const tile = this.tileAt(nx, ny);
-    if (SOLID.has(tile) || this.npcs.some((n) => n.x === nx && n.y === ny)) return;
+    if (this.occupied(nx, ny)) return;
 
     if (tile === 'G' && !state.flags.duendeRestored && !state.flags.metCarmen) {
       void this.script(() => ui.say(NEED_WORDS));
@@ -197,18 +230,49 @@ export class OverworldScene extends Phaser.Scene {
     this.tweens.add({ targets: this.player, scaleY: 0.92, duration: 75, yoyo: true });
   }
 
+  /** Strollers take a step now and then, staying in their area and out of everyone's way. */
+  private wander(): void {
+    if (this.scripting || ui.busy) return;
+    for (const npc of this.npcs) {
+      const area = npc.def?.wander;
+      if (!area || npc.busy || Math.random() < 0.5) continue;
+      const dirs = Object.values(DELTA);
+      const [dx, dy] = dirs[(Math.random() * dirs.length) | 0];
+      const nx = npc.x + dx;
+      const ny = npc.y + dy;
+      const inArea = nx >= area.x && nx < area.x + area.w && ny >= area.y && ny < area.y + area.h;
+      const onPlayer = nx === this.pos.x && ny === this.pos.y;
+      if (!inArea || onPlayer || this.tileAt(nx, ny) === 'G' || this.occupied(nx, ny)) continue;
+      npc.x = nx;
+      npc.y = ny;
+      npc.busy = true;
+      if (dx) npc.sprite.setFlipX(dx < 0);
+      this.tweens.add({
+        targets: npc.sprite,
+        x: nx * TILE + TILE / 2,
+        y: (ny + 1) * TILE,
+        duration: 260,
+        onComplete: () => {
+          npc.sprite.setDepth(ny);
+          npc.busy = false;
+        },
+      });
+    }
+  }
+
   // ---------------------------------------------------------------------------
   // Interaction and scripts
 
   private idle(): void {
+    const touch = matchMedia('(pointer: coarse)').matches;
     ui.explore(
       state.flags.duendeRestored
-        ? 'The market is coming back to life.'
+        ? 'The market is coming back to life. Chat with the stallholders!'
         : state.flags.metCarmen
-          ? 'Head north to the static at the fruit stall.'
-          : matchMedia('(pointer: coarse)').matches
-            ? 'Find someone to talk to. D-pad to move, A to talk.'
-            : 'Find someone to talk to. Arrows/WASD to move, SPACE to talk.',
+          ? "Head north to ANTI's static by the fruit stall. Or chat with people first."
+          : touch
+            ? 'Talk to Carmen at the fruit stall. D-pad to move, A to talk.'
+            : 'Talk to Carmen at the fruit stall. Arrows/WASD to move, SPACE to talk.',
     );
   }
 
@@ -229,74 +293,23 @@ export class OverworldScene extends Phaser.Scene {
     const [dx, dy] = DELTA[this.facing];
     const npc = this.npcs.find((n) => n.x === this.pos.x + dx && n.y === this.pos.y + dy);
     if (!npc) return;
+    // Face the player while talking.
+    if (dx) npc.sprite.setFlipX(dx > 0);
     if (npc.id === 'carmen') void this.script(() => this.talkToCarmen());
-    else if (state.flags.duendeRestored) void this.script(() => ui.say(DUENDE_RESTORED_IDLE));
+    else if (npc.id === 'duende') {
+      if (state.flags.duendeRestored) void this.script(() => ui.say(DUENDE_RESTORED_IDLE));
+    } else if (npc.def) {
+      const talk = npc.def.talks[npc.talkIndex % npc.def.talks.length];
+      npc.talkIndex++;
+      const name = npc.def.name;
+      void this.script(() => ui.say(talk.map((line) => (line.who === 'npc' ? { ...line, name } : line))));
+    }
   }
 
-  // ---------------------------------------------------------------------------
-  // Opening: a voice in the dark, waking up, OMNI calling from your pocket.
-
-  private cameraFade(kind: 'in' | 'out', ms: number): Promise<void> {
-    const cam = this.cameras.main;
-    return new Promise((resolve) => {
-      cam.once(kind === 'in' ? 'camerafadeincomplete' : 'camerafadeoutcomplete', () => resolve());
-      if (kind === 'in') cam.fadeIn(ms, 0, 0, 0);
-      else cam.fadeOut(ms, 0, 0, 0);
-    });
-  }
-
-  private playStory(): Promise<void> {
-    return new Promise((resolve) => {
-      this.game.events.once('story-done', () => {
-        this.scene.stop('Story');
-        resolve();
-      });
-      this.scene.launch('Story');
-    });
-  }
-
-  private async intro(): Promise<void> {
-    const cam = this.cameras.main;
-    cam.fadeOut(0, 0, 0, 0);
-    this.player.setAngle(-90).setOrigin(0.5, 0.5).setY(this.player.y - 6);
-    await ui.say(DARK_VOICE);
-
-    // Eyes opening: blink, blink, then awake.
-    await this.cameraFade('in', 700);
-    await this.cameraFade('out', 200);
-    await this.cameraFade('in', 1100);
-    await ui.say(WAKE_UP);
-
-    // Get up.
-    sfx.move();
-    await new Promise<void>((resolve) =>
-      this.tweens.add({
-        targets: this.player,
-        angle: 0,
-        y: this.player.y - 4,
-        duration: 260,
-        ease: 'Back.out',
-        onComplete: () => {
-          this.player.setOrigin(0.5, 1);
-          this.placePlayer();
-          resolve();
-        },
-      }),
-    );
-
-    sfx.buzz();
-    this.tweens.add({ targets: this.player, x: this.player.x + 1, duration: 40, yoyo: true, repeat: 5 });
-    await ui.say(PHONE_BUZZ);
-
-    await this.playStory();
-    await this.cameraFade('in', 600);
-    await ui.say(AFTER_STORY);
-
-    const name = await ui.ask({ who: 'omni', line: ASK_NAME, placeholder: 'Your name', accents: false });
-    state.name = (name ?? 'Alex').slice(0, 16);
-    state.flags.prologue = true;
+  private async arrive(): Promise<void> {
+    await ui.say(ARRIVAL);
+    state.flags.arrived = true;
     save();
-    await ui.say(AFTER_NAME(state.name));
   }
 
   private async talkToCarmen(): Promise<void> {

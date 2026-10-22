@@ -1,7 +1,10 @@
 import Phaser from 'phaser';
 import './style.css';
+import { initAccount } from './account';
 import { BattleScene } from './scenes/BattleScene';
 import { BootScene } from './scenes/BootScene';
+import { DeparturesScene } from './scenes/DeparturesScene';
+import { OpeningScene } from './scenes/OpeningScene';
 import { OverworldScene } from './scenes/OverworldScene';
 import { StoryScene } from './scenes/StoryScene';
 import { TitleScene } from './scenes/TitleScene';
@@ -9,6 +12,13 @@ import { ui } from './ui/panel';
 
 async function start(): Promise<void> {
   ui.mount(document.getElementById('screen-bottom')!);
+  try {
+    // Restores a signed-in session (and the newer of the local/cloud saves) before the menu shows.
+    await initAccount();
+  } catch {
+    // Offline or misconfigured: play as a guest.
+  }
+  ui.updateHud();
   try {
     // Canvas text needs the pixel font loaded before the first scene draws.
     await document.fonts.load('16px VT323');
@@ -23,7 +33,7 @@ async function start(): Promise<void> {
     pixelArt: true,
     backgroundColor: '#05030c',
     scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
-    scene: [BootScene, TitleScene, OverworldScene, StoryScene, BattleScene],
+    scene: [BootScene, TitleScene, OpeningScene, StoryScene, DeparturesScene, OverworldScene, BattleScene],
   });
 }
 

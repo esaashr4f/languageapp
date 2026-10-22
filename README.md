@@ -1,4 +1,6 @@
-# Language RPG (title TBD)
+# Zaban
+
+*Zaban* means "language" or "tongue" in Persian, Urdu and Hindi.
 
 A language-learning RPG for polyglots. A virus called ANTI has broken into OMNI, the
 world's translation AI, erased English and started rewriting every language. Live
@@ -6,10 +8,19 @@ through each country, restore its corrupted legends by speaking to them, and bec
 the living backup ANTI can't delete. Casual modes (Daily Climb, Tower, Bridge Rush,
 Duels) and a story mode share one profile.
 
-## Prototype: Spain, Act 1 (El Mercado)
+## Prototype
 
-A playable slice: the opening (wake up with no memory, OMNI explains everything in an illustrated flashback), a market in Madrid, Carmen's "first order" life
-event, and a legend battle against the corrupted market duende.
+- **Title screen:** Story Mode, Casual Modes (coming soon), Log in / Profile.
+- **Story Mode opening:** a voice in the dark; you wake on your back under a glitching sky
+  at a stranded airport; OMNI calls from your pocket and explains everything in an
+  illustrated flashback; you give your name.
+- **Choosing a country:** a departures board. Only Madrid is open for now; OMNI warns that
+  once you land, the borders lock until you free that country.
+- **Spain, Act 1 (Mercado de la Luz):** a full market with eight stalls, Spanish signs, a
+  fountain plaza, and stallholders and passers-by to chat with; Carmen's "first order"
+  life event; the corrupted duende legend battle.
+- **Accounts:** sign in with Google, Apple, Facebook or Discord (Supabase) to save progress
+  to the cloud; guests save on the device. See `docs/setup.md`.
 
 ```bash
 npm install
@@ -45,6 +56,7 @@ The EN chip toggles English subtitles.
 
 - `docs/story-and-world.md`: lore, why legends attack, country stories, life events, ending
 - `docs/gamification.md`: casual vs story mode, battles, food, coins, progression, build order
+- `docs/setup.md`: deploying on Vercel and turning on log-in (Supabase + providers)
 - `docs/ai-integration.md`: how Claude grades answers and voices the legends (Haiku + Opus)
 - `docs/polyglot-game-design.md`: daily round, rarity tiers and grading
 - `research/krillion/`: teardown of Krillion (the inspiration) plus a style demo

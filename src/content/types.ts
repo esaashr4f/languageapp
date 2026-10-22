@@ -1,9 +1,11 @@
 import type { Prompt } from '../engine/grader';
 
-export type SpeakerId = 'omni' | 'voice' | 'self' | 'carmen' | 'duende' | 'corrupt' | 'system';
+export type SpeakerId = 'omni' | 'voice' | 'self' | 'npc' | 'carmen' | 'duende' | 'corrupt' | 'system';
 
 export interface Line {
   who?: SpeakerId;
+  /** Overrides the speaker's nameplate (used for market NPCs). */
+  name?: string;
   text: string;
   /** English subtitle for target-language lines (toggle with the EN button). */
   gloss?: string;

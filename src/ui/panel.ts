@@ -11,6 +11,7 @@ const SPEAKERS: Record<SpeakerId, { name: string; color: string; pitch: number }
   omni: { name: 'OMNI', color: '#59c8ff', pitch: 880 },
   voice: { name: '???', color: '#59c8ff', pitch: 880 },
   self: { name: '', color: '#c9c2ea', pitch: 330 },
+  npc: { name: '', color: '#ff9f5a', pitch: 600 },
   carmen: { name: 'CARMEN', color: '#ffc247', pitch: 520 },
   duende: { name: 'DUENDE', color: '#7cf5b0', pitch: 700 },
   corrupt: { name: '???', color: '#ff5252', pitch: 170 },
@@ -114,6 +115,8 @@ class Panel {
     if (!this.hud) return;
     this.hud.innerHTML = '';
     const stats = el('div', 'stats');
+    // Stats only mean something once a story has started.
+    stats.hidden = !state.flags.opening;
     const hpPct = Math.max(0, Math.round((state.hp / state.maxHp) * 100));
     stats.innerHTML =
       `<span class="hp"><b>HP</b> <i class="bar"><i style="width:${hpPct}%"></i></i> ${state.hp}/${state.maxHp}</span>` +
@@ -156,8 +159,9 @@ class Panel {
     }
   }
 
-  private box(who: SpeakerId | undefined): HTMLElement {
-    const speaker = SPEAKERS[who ?? 'system'];
+  private box(who: SpeakerId | undefined, nameOverride?: string): HTMLElement {
+    const speaker = { ...SPEAKERS[who ?? 'system'] };
+    if (nameOverride) speaker.name = nameOverride;
     const box = el('div', `box speaker-${who ?? 'system'}`);
     if (speaker.name) {
       const tag = el('div', 'who', speaker.name);
@@ -171,7 +175,7 @@ class Panel {
   private sayOne(line: Line): Promise<void> {
     return new Promise((resolve) => {
       const pitch = SPEAKERS[line.who ?? 'system'].pitch;
-      const box = this.box(line.who);
+      const box = this.box(line.who, line.name);
       const text = el('p', 'text');
       const next = el('span', 'next', '▼');
       next.hidden = true;
