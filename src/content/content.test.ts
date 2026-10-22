@@ -17,10 +17,11 @@ describe('Spain Act 1 content', () => {
       }
     });
 
-    it(`"${prompt.line}" has a beginner answer and a native-or-better answer`, () => {
+    it(`"${prompt.line}" has a goal, a simple correct answer and a natural-or-better answer`, () => {
       const ranks = prompt.answers.map((a) => tierRank(a.tier));
-      expect(Math.min(...ranks)).toBe(0);
-      expect(Math.max(...ranks)).toBeGreaterThanOrEqual(tierRank('native'));
+      expect(prompt.goal).toBeTruthy();
+      expect(ranks).toContain(tierRank('clear'));
+      expect(Math.max(...ranks)).toBeGreaterThanOrEqual(tierRank('natural'));
     });
   }
 

@@ -21,7 +21,13 @@ async function start(): Promise<void> {
   ui.updateHud();
   try {
     // Canvas text needs the pixel font loaded before the first scene draws.
-    await document.fonts.load('16px VT323');
+    await Promise.allSettled([
+      document.fonts.load('16px VT323'),
+      document.fonts.load('bold 64px "Noto Sans"', 'ΖΑΒΝЗАБН'),
+      document.fonts.load('bold 64px "Noto Sans Arabic"', 'زابن'),
+      document.fonts.load('bold 64px "Noto Sans JP"', 'ザアバン'),
+      document.fonts.load('bold 64px "Noto Sans Devanagari"', 'ज़अबन'),
+    ]);
   } catch {
     // Fall back to monospace.
   }

@@ -16,6 +16,8 @@ export type PhaseId = 'corrupted' | 'wavering' | 'remembering';
 export interface BattlePhase {
   id: PhaseId;
   label: string;
+  /** What the player is trying to do in this phase, shown as a step tracker. */
+  step: string;
   /** Phase starts when corruption drops to or below this value. */
   from: number;
   enter: Line[];

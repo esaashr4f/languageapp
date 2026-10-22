@@ -9,6 +9,8 @@ export interface Answer {
 export interface Prompt {
   line: string;
   gloss: string;
+  /** What the speaker needs to hear, in English. OMNI coaches with it; the AI rater checks it. */
+  goal?: string;
   answers: Answer[];
 }
 
@@ -78,11 +80,11 @@ function compile(pattern: string, slots: Slots): RegExp {
   return new RegExp(`^${source}$`);
 }
 
-export function matches(input: string, answer: Answer, slots: Slots = {}): boolean {
+export function matches(input: string, answer: Answer, slots: Slots = {}, fuzzy = true): boolean {
   const pattern = normalize(answer.text);
   if (pattern.includes('{')) return compile(pattern, slots).test(input);
   if (pattern === input) return true;
-  return osa(pattern, input) <= typoAllowance(pattern.length);
+  return fuzzy && osa(pattern, input) <= typoAllowance(pattern.length);
 }
 
 /** One answer per tier, most natural first. */
@@ -97,19 +99,26 @@ function spread(answers: Answer[], aboveRank: number, limit: number): Answer[] {
 
 export function grade(prompt: Prompt, raw: string, slots: Slots = {}): Grade {
   const input = normalize(raw);
-  if (!input) return { tier: null, better: spread(prompt.answers, -1, 3) };
+  if (!input) return { tier: null, better: spread(prompt.answers, tierRank('faint'), 2) };
   const candidates = [...new Set([input, stripFillers(input)])];
 
-  let best: Answer | undefined;
-  for (const answer of prompt.answers) {
-    if (best && tierRank(answer.tier) <= tierRank(best.tier)) continue;
-    if (candidates.some((c) => matches(c, answer, slots))) best = answer;
-  }
+  // Exact matches win over typo-tolerant ones, so a listed mistake ("tú es") isn't
+  // fuzzily upgraded to the correct answer it is one edit away from ("tú eres").
+  const find = (fuzzy: boolean) => {
+    let best: Answer | undefined;
+    for (const answer of prompt.answers) {
+      if (best && tierRank(answer.tier) <= tierRank(best.tier)) continue;
+      if (candidates.some((c) => matches(c, answer, slots, fuzzy))) best = answer;
+    }
+    return best;
+  };
+  const best = find(false) ?? find(true);
   if (!best) {
-    // On a miss, show the easiest way plus the most natural ones.
-    const easiest = [...prompt.answers].sort((a, b) => tierRank(a.tier) - tierRank(b.tier))[0];
-    const top = spread(prompt.answers, tierRank(easiest.tier), 2);
-    return { tier: null, better: [...top, easiest] };
+    // On a miss, show the simplest correct way plus the most natural one.
+    const correct = prompt.answers.filter((a) => tierRank(a.tier) >= tierRank('clear'));
+    const simplest = [...correct].sort((a, b) => tierRank(a.tier) - tierRank(b.tier))[0];
+    const top = spread(correct, tierRank(simplest.tier), 1);
+    return { tier: null, better: [...top, simplest] };
   }
   return { tier: best.tier, matched: best, better: spread(prompt.answers, tierRank(best.tier), 2) };
 }

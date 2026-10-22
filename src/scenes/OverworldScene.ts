@@ -9,7 +9,7 @@ import {
   MARKET_NPCS, PLANTS, STALLS, type MarketNpc,
 } from '../content/spain/market';
 import { fillSlots, grade } from '../engine/grader';
-import { tierRank } from '../engine/tiers';
+import { tierById, tierRank } from '../engine/tiers';
 import { save, state } from '../state';
 import { ui, type Dir } from '../ui/panel';
 
@@ -327,7 +327,7 @@ export class OverworldScene extends Phaser.Scene {
 
     await ui.say(CARMEN_GREETING);
     for (;;) {
-      const answer = await ui.ask({ who: 'carmen', line: CARMEN_ORDER.line, gloss: CARMEN_ORDER.gloss });
+      const answer = await ui.ask({ who: 'carmen', line: CARMEN_ORDER.line, gloss: CARMEN_ORDER.gloss, coach: CARMEN_ORDER.goal });
       const result = grade(CARMEN_ORDER, answer ?? '', SLOTS);
       const examples = SLOT_EXAMPLES(state.name);
       if (!result.tier) {
@@ -340,10 +340,10 @@ export class OverworldScene extends Phaser.Scene {
       await ui.result({
         tier: result.tier,
         headline: `"${answer}"`,
-        detail: 'Your first order in Spanish!',
+        detail: `${tierById(result.tier).blurb}. Your first order in Spanish!`,
         better: result.better.map((a) => fillSlots(a.text, examples)),
       });
-      await ui.say(tierRank(result.tier) >= tierRank('native') ? CARMEN_SERVED_NATIVE : CARMEN_SERVED);
+      await ui.say(tierRank(result.tier) >= tierRank('natural') ? CARMEN_SERVED_NATIVE : CARMEN_SERVED);
       break;
     }
     await ui.say(CARMEN_AFTER_ORDER);

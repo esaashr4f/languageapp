@@ -34,6 +34,8 @@ export interface AskOpts {
   timerSec?: number;
   placeholder?: string;
   accents?: boolean;
+  /** OMNI's coaching: what the speaker needs to hear. */
+  coach?: string;
 }
 
 export interface ResultView {
@@ -297,6 +299,11 @@ class Panel {
         box.classList.add('asking');
         box.append(el('p', 'text', opts.line));
         if (opts.gloss && this.showGloss) box.append(el('p', 'gloss', opts.gloss));
+        if (opts.coach) {
+          const coach = el('p', 'coach');
+          coach.append(el('b', '', 'OMNI'), document.createTextNode(` ${opts.coach}`));
+          box.append(coach);
+        }
 
         let timeout = 0;
         if (opts.timerSec) {
@@ -369,7 +376,7 @@ class Panel {
         box.append(stamp, el('p', 'text', view.headline));
         if (view.detail) box.append(el('p', 'gloss', view.detail));
         if (view.better.length) {
-          box.append(el('p', 'label', tier ? 'Even more natural:' : 'You could say:'));
+          box.append(el('p', 'label', !tier ? 'You could say:' : view.tier === 'faint' ? 'Try it like this:' : 'Even more natural:'));
           const list = el('ul', 'better');
           for (const b of view.better) list.append(el('li', '', b));
           box.append(list);

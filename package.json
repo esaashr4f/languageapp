@@ -8,7 +8,8 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "test": "vitest run",
-    "typecheck": "tsc"
+    "typecheck": "tsc",
+    "docs:characters": "vite-node scripts/characters-doc.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.45.4",

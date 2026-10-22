@@ -3,7 +3,7 @@ import { sfx } from '../audio';
 import { ITEMS, type ItemId } from '../content/items';
 import { DUENDE_BATTLE, SLOT_EXAMPLES, SLOTS } from '../content/spain/act1';
 import type { BattlePhase, LegendBattle } from '../content/types';
-import { fillSlots, grade } from '../engine/grader';
+import { fillSlots, grade, type Prompt } from '../engine/grader';
 import { tierById, tierRank } from '../engine/tiers';
 import { save, state } from '../state';
 import { ui } from '../ui/panel';
@@ -28,6 +28,9 @@ export class BattleScene extends Phaser.Scene {
   private hpText!: Phaser.GameObjects.Text;
   private nameText!: Phaser.GameObjects.Text;
   private phaseText!: Phaser.GameObjects.Text;
+  private steps: Phaser.GameObjects.Text[] = [];
+  /** The line the legend is about to say; shown with OMNI's goal before you act. */
+  private current: Prompt | null = null;
 
   constructor() {
     super('Battle');
@@ -38,6 +41,7 @@ export class BattleScene extends Phaser.Scene {
     this.corruption = 100;
     this.phaseIndex = 0;
     this.promptIndex = this.battle.phases.map(() => 0);
+    this.current = null;
     this.bonusTime = 0;
     this.ended = false;
     if (state.hp <= 0) state.hp = state.maxHp;
@@ -66,6 +70,9 @@ export class BattleScene extends Phaser.Scene {
     this.add.rectangle(16, 52, 200, 10, 0x2a2350).setOrigin(0, 0.5).setDepth(10);
     this.corruptionFill = this.add.rectangle(16, 52, 200, 10, 0xff5252).setOrigin(0, 0.5).setDepth(11);
 
+    // Step tracker: what you're trying to do, right now and next.
+    this.steps = this.battle.phases.map((p, i) => text(width - 16, 30 + i * 16, `${i + 1} ${p.step}`, '#9a90c4', 15).setOrigin(1, 0));
+
     text(16, height - 46, (state.name || 'YOU').toUpperCase(), '#7cf5b0', 18);
     this.add.rectangle(16, height - 20, 150, 8, 0x2a2350).setOrigin(0, 0.5).setDepth(10);
     this.hpFill = this.add.rectangle(16, height - 20, 150, 8, 0x7cf5b0).setOrigin(0, 0.5).setDepth(11);
@@ -87,7 +94,8 @@ export class BattleScene extends Phaser.Scene {
   private async run(): Promise<void> {
     await ui.say(this.battle.intro);
     while (!this.ended) {
-      const command = await ui.choose(this.phase.baseDamage ? 'What will you do?' : 'He is listening. Talk to him.', [
+      this.current ??= this.nextPrompt();
+      const command = await ui.choose(`OMNI: ${this.current.goal ?? 'Answer him in Spanish.'}`, [
         { id: 'speak', label: 'SPEAK' },
         { id: 'item', label: 'ITEM', disabled: !Object.values(state.items).some((n) => n > 0) },
         { id: 'hint', label: 'HINT', note: `${HINT_COST} coins`, disabled: state.coins < HINT_COST },
@@ -106,14 +114,15 @@ export class BattleScene extends Phaser.Scene {
   }
 
   private async speakTurn(withHint: boolean): Promise<void> {
-    const prompt = this.nextPrompt();
+    const prompt = this.current ?? this.nextPrompt();
+    this.current = null;
     const examples = SLOT_EXAMPLES(state.name);
     const who = this.phaseIndex === 0 ? 'corrupt' : 'duende';
 
     if (withHint) {
       state.coins -= HINT_COST;
       ui.updateHud();
-      const easiest = prompt.answers[0];
+      const easiest = prompt.answers.find((a) => a.tier === 'clear') ?? prompt.answers[0];
       const best = [...prompt.answers].sort((a, b) => tierRank(b.tier) - tierRank(a.tier))[0];
       const firstLetters = fillSlots(best.text, examples).replace(/([\p{L}])([\p{L}]+)/gu, (_, a: string, rest: string) => a + '_'.repeat(rest.length));
       await ui.say([{ who: 'omni', text: `Hint: "${fillSlots(easiest.text, examples)}" works. A native would say something like: ${firstLetters}` }]);
@@ -121,7 +130,7 @@ export class BattleScene extends Phaser.Scene {
 
     const timerSec = this.phase.timerSec + this.bonusTime;
     this.bonusTime = 0;
-    const answer = await ui.ask({ who, line: prompt.line, gloss: prompt.gloss, timerSec });
+    const answer = await ui.ask({ who, line: prompt.line, gloss: prompt.gloss, timerSec, coach: prompt.goal });
     const result = grade(prompt, answer ?? '', SLOTS);
     const better = result.better.map((a) => fillSlots(a.text, examples));
 
@@ -144,7 +153,7 @@ export class BattleScene extends Phaser.Scene {
     await ui.result({
       tier: result.tier,
       headline: `"${answer}"`,
-      detail: `Corruption −${tier.clear}%`,
+      detail: `${tier.blurb}. Corruption −${tier.clear}%`,
       better,
     });
     ui.updateHud();
@@ -153,7 +162,7 @@ export class BattleScene extends Phaser.Scene {
     await this.checkPhase();
     if (this.ended) return;
     // Corrupted legends still lash out, but natural answers soften the blow.
-    const damage = Math.max(0, this.phase.baseDamage - rank);
+    const damage = Math.max(0, this.phase.baseDamage - rank * 2);
     if (damage > 0) await this.enemyAttack(damage);
   }
 
@@ -249,6 +258,12 @@ export class BattleScene extends Phaser.Scene {
     const hp = state.hp / state.maxHp;
     this.corruptionFill.setFillStyle(phaseColor);
     this.phaseText.setText(this.phase.label).setColor(`#${phaseColor.toString(16)}`);
+    this.steps.forEach((t, i) => {
+      const done = i < this.phaseIndex || this.corruption <= 0;
+      const now = i === this.phaseIndex && !done;
+      t.setText(`${done ? 'OK' : now ? '>' : ' '} ${i + 1} ${this.battle.phases[i].step}`);
+      t.setColor(done ? '#7cf5b0' : now ? '#ffc247' : '#6b6490');
+    });
     this.hpText.setText(`${state.hp}/${state.maxHp}`);
     this.hpFill.setFillStyle(hp < 0.3 ? 0xff5252 : 0x7cf5b0);
     if (!animate) {

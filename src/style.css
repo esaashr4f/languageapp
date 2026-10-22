@@ -107,6 +107,8 @@ button, input { font: inherit; color: inherit; }
 }
 .text { margin: 0; font-size: 26px; line-height: 1.15; white-space: pre-wrap; }
 .gloss { margin: 8px 0 0; font-size: 19px; color: var(--ink-muted); }
+.coach { margin: 10px 0 0; padding: 6px 10px; border-left: 3px solid var(--sky); background: #0d1c35; font-size: 20px; }
+.coach b { color: var(--sky); font-weight: 400; letter-spacing: 0.15em; margin-right: 6px; }
 .label { margin: 12px 0 4px; font-size: 18px; color: var(--ink-muted); letter-spacing: 0.1em; text-transform: uppercase; }
 .next { position: absolute; right: 12px; bottom: 4px; animation: blink 0.8s steps(2) infinite; }
 @keyframes blink { 50% { opacity: 0; } }

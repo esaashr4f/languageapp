@@ -5,6 +5,27 @@ import { hasStory, resetState, state } from '../state';
 import { openLogin, openProfile } from '../ui/accountView';
 import { ui, type Option } from '../ui/panel';
 
+/** Each letter of ZABAN in scripts that make the same sound. The first entry is the logo's resting form. */
+const LETTERS: { glyph: string; font: string }[][] = [
+  [g('Ζ', 'greek'), g('Z', 'latin'), g('З', 'cyrillic'), g('ز', 'arabic'), g('ザ', 'jp')],
+  [g('А', 'cyrillic'), g('A', 'latin'), g('Α', 'greek'), g('ا', 'arabic'), g('अ', 'hindi')],
+  [g('ب', 'arabic'), g('B', 'latin'), g('Β', 'greek'), g('Б', 'cyrillic'), g('ब', 'hindi')],
+  [g('ア', 'jp'), g('A', 'latin'), g('А', 'cyrillic'), g('Α', 'greek'), g('अ', 'hindi')],
+  [g('न', 'hindi'), g('N', 'latin'), g('Ν', 'greek'), g('Н', 'cyrillic'), g('ン', 'jp')],
+];
+
+function g(glyph: string, script: 'latin' | 'greek' | 'cyrillic' | 'arabic' | 'jp' | 'hindi') {
+  const font = {
+    latin: 'VT323',
+    greek: '"Noto Sans"',
+    cyrillic: '"Noto Sans"',
+    arabic: '"Noto Sans Arabic"',
+    jp: '"Noto Sans JP"',
+    hindi: '"Noto Sans Devanagari"',
+  }[script];
+  return { glyph, font };
+}
+
 export class TitleScene extends Phaser.Scene {
   constructor() {
     super('Title');
@@ -25,31 +46,46 @@ export class TitleScene extends Phaser.Scene {
       city.fillRect(x, height - h, 16, h);
     }
 
-    const style = { fontFamily: 'VT323', fontSize: '96px' };
-    const pink = this.add.text(width / 2 - 4, 92, 'ZABAN', { ...style, color: '#ff6b9d' }).setOrigin(0.5);
-    const blue = this.add.text(width / 2 + 4, 88, 'ZABAN', { ...style, color: '#59c8ff' }).setOrigin(0.5);
-    this.add.text(width / 2, 90, 'ZABAN', { ...style, color: '#f1ecff' }).setOrigin(0.5);
+    this.drawLogo(width);
     this.add
-      .text(width / 2, 150, 'A  L A N G U A G E  R P G', { fontFamily: 'VT323', fontSize: '20px', color: '#ffc247' })
+      .text(width / 2, 142, 'zaban', { fontFamily: 'VT323', fontSize: '34px', color: '#f1ecff' })
       .setOrigin(0.5);
-
-    // ANTI interference now and then.
-    const glitch = this.add.graphics();
-    this.time.addEvent({
-      delay: 140,
-      loop: true,
-      callback: () => {
-        glitch.clear();
-        const hit = Math.random() < 0.08;
-        pink.x = width / 2 - 4 + (hit ? (Math.random() - 0.5) * 10 : 0);
-        blue.x = width / 2 + 4 - (hit ? (Math.random() - 0.5) * 10 : 0);
-        if (!hit) return;
-        glitch.fillStyle(0xff5252, 0.35).fillRect(0, 60 + Math.random() * 70, width, 2 + Math.random() * 3);
-      },
-    });
+    this.add
+      .text(width / 2, 168, 'A  L A N G U A G E  R P G', { fontFamily: 'VT323', fontSize: '16px', color: '#ffc247' })
+      .setOrigin(0.5);
 
     ui.updateHud();
     void this.menu();
+  }
+
+  /** ZABAN spelled in five scripts, with a chromatic glitch; ANTI now and then scrambles a letter. */
+  private drawLogo(width: number): void {
+    const spacing = 74;
+    const left = width / 2 - spacing * 2;
+    const y = 82;
+    LETTERS.forEach((forms, i) => {
+      const x = left + i * spacing;
+      const layer = (color: string, dx: number, dy: number) =>
+        this.add
+          .text(x + dx, y + dy, forms[0].glyph, { fontFamily: forms[0].font, fontSize: '64px', fontStyle: 'bold', color })
+          .setOrigin(0.5);
+      const pink = layer('#ff6b9d', -3, 2);
+      const blue = layer('#59c8ff', 3, -2);
+      const main = layer('#f1ecff', 0, 0);
+      const layers = [pink, blue, main];
+      const show = (form: { glyph: string; font: string }) =>
+        layers.forEach((t) => t.setText(form.glyph).setFontFamily(form.font));
+
+      // Every few seconds, cycle this letter through its other scripts, then settle back.
+      this.time.addEvent({
+        delay: 2600 + i * 700,
+        loop: true,
+        callback: () => {
+          forms.slice(1).forEach((form, k) => this.time.delayedCall(k * 110, () => show(form)));
+          this.time.delayedCall(forms.length * 110, () => show(forms[0]));
+        },
+      });
+    });
   }
 
   private storySummary(): string {
