@@ -1,6 +1,6 @@
 # Polyglot daily game — design draft
 
-Working title: **BABEL** ("the daily climb"). Inspired by Krillion's rarity-scoring loop
+This is the Daily Climb in the Language Tower (see `story-and-world.md`). Inspired by Krillion's rarity-scoring loop
 (see `research/krillion/README.md`), rebuilt for language learning.
 
 ## Core loop

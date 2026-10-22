@@ -1,103 +1,92 @@
-# BABEL — gamification plan
+# Gamification plan (v2: RPG direction)
 
-Goal: a game people *want* to open every day and find hard to put down, while the thing
-that keeps them playing is real progress in their languages. Every system below is tied
-to learning, not just engagement.
+The rule behind every system: **what you can say is what you can do.** Your power in
+the game is your real ability in the language.
 
-## 1. The loops
+## 1. Spells = things you can say
 
-**Moment-to-moment (seconds):** prompt → type → tier stamp with sound, Pip reacts,
-altitude climbs, then a reveal of better answers. Rare answers get a big flash. A miss
-still teaches something (the near-miss reveal is what makes you hit "next").
+Every phrase you learn becomes a spell in your spellbook. In battle you cast it by
+typing it (or saying it aloud, later with speech recognition) in response to the
+situation.
 
-**Session (minutes):** the 7-prompt Daily Climb, then a reward chest, a story beat with a
-resident, and a prompt to do one more: *"Hushed words are attacking La Plaza: 3 left"*.
+- **Spell power = how natural your answer is.** The rarity tiers from the daily game
+  become damage multipliers: Phrasebook ×1, Textbook ×1.5, Conversational ×3, Native ×6,
+  Regional ×8.5, Polyglot ×10.
+- **Spell schools match grammar and functions:**
 
-**Daily:** a Daily Climb per language, a streak, and a countdown to the next climb.
-Yesterday's best finds, where you see the rare answer you didn't think of.
+| School | Language skill | Battle effect |
+| --- | --- | --- |
+| Strike | commands, imperatives | direct damage |
+| Ward | polite requests, conditional ("could you...") | shield |
+| Mend | thanks, compliments, apologies | heal |
+| Chain | storytelling in past tenses | combo, hits multiple times |
+| Hex | negatives, comparatives | weakens the boss |
+| Ultimate | idioms and proverbs | huge damage, unlocks at higher levels |
 
-**Weekly:** a league table, a boss climb (harder prompts, double altitude), friendship
-milestones, a new story chapter.
+- **Unlocking:** new spells unlock as you learn them (campaign, tower, reviews). The
+  subjunctive unlocks a whole new school in Spanish and French, which is a reason to
+  actually learn it.
+- **Boss weaknesses:** each boss is weak to a skill. The Phantom of the Opera is weak to
+  formal French (vous). The Oni switches between polite and casual Japanese, and you
+  have to match its register.
 
-**Season (6–8 weeks):** event story, a new resident, limited cosmetics, a community summit
-goal.
+## 2. Boss battles
 
-## 2. Systems
+- Turn-based: the boss says something in the target language (text, later audio). You
+  reply within a time limit. The quality of your reply decides damage.
+- Phases: boss HP bars split into phases that test different skills.
+- Misses hurt: your HP drops. Words you missed become **Glitched words** that come back
+  later as weaker enemies (spaced repetition: you review them until they stick).
+- Rewards: coins, XP, a country souvenir and a story chapter.
 
-### Rarity scoring (the core)
-Six tiers from Phrasebook (10) to Polyglot (100). Always scoring *something* for a correct
-answer keeps beginners playing; the top tiers give advanced learners a reason to stretch.
+## 3. Progression
 
-### Lexicon cards (collection)
-Every Native-or-better answer becomes a collectible card in your Lexicon: the word or phrase,
-meaning, example, region, and rarity foil. Missing slots show as silhouettes ("12 / 40
-Spanish food idioms"). Completing a set rebuilds a part of that language's floor.
+- **Fluency level per language** (roughly A1 to C2), from XP. It's your "trainer level".
+- **Reputation per country:** handling situations naturally gets locals to trust you,
+  unlocking side quests, secret areas and better prices.
+- **Masters and crests:** the long-term goal per language.
+- **World map:** countries go from glitched/grey to full colour as you clean them.
 
-### Hushed words (spaced repetition in disguise)
-Anything you miss or answer at a low tier returns days later as an enemy. Beat it at a
-higher tier and it turns into a card. This is the part that actually makes you learn,
-and the story makes it feel like a fight, not homework.
+## 4. Coins: what they buy
 
-### Streaks, done kindly
-- Daily streak per language plus an overall "Wayfinder streak".
-- Streak freezes earned by play (not bought), and a "repair" quest if you miss a day.
-- No guilt messages; Pip just looks sleepy.
+Coins are earned only by playing (fights, quests, daily climb). Nothing that can be
+bought with real money gives a battle advantage.
 
-### Polyglot combos
-Play your languages back to back for a multiplier (×1.5 for 2 languages, ×2 for 3+).
-Polyglot Daily: one prompt in each language you study. The game rewards breadth, which is
-what makes it different from single-language apps.
+| Shop | Examples | Why it's worth it |
+| --- | --- | --- |
+| **Local food (consumables)** | paella (+HP), ramen (+time per answer), croissant (shield), tacos (crit chance) | buffs before a boss; food is also culture |
+| **Hint items** | first-letter hint, "phrasebook" peek at the tier list, rewind one answer | help when stuck, without giving the answer away |
+| **Spell scrolls** | learn a specific idiom/slang pack early | grind for coins, unlock content |
+| **Travel tickets** | unlock side regions (Canary Islands, Okinawa, Quebec) | more story and dialects |
+| **Outfits** | traditional and modern clothes from each country | cosmetic, show off on profile and in battles |
+| **Home** | your apartment in each country, decorated with souvenirs | cosmetic collection |
+| **Companion upgrades** | skins, voice packs | cosmetic |
 
-### Friendship and story
-Residents' friendship levels unlock chapters, slang packs and new areas. Story chapters
-end on cliffhangers so there's always a reason to come back tomorrow.
+## 5. Loops that keep you playing
 
-### Rebuilding the Tower (visible long-term progress)
-Your personal Tower map: each floor goes from ruined to restored as you level up in that
-language (mapped roughly to CEFR A1–C2). Decorations you earn appear on your floors.
-Friends can visit your Tower.
+- **Seconds:** answer, then a damage number, a tier flash and a sound. You see the better
+  answer you almost had.
+- **Session:** one encounter or boss, then rewards and a story beat with a cliffhanger.
+- **Daily:** Daily Climb in the tower, daily quests in each country, a streak, Glitched
+  words to clear.
+- **Weekly:** a new Master challenge, leagues, a rotating event boss.
+- **Long term:** crests, cleaning countries, the final fight with OMNI, new countries
+  in seasonal updates.
 
-### Social
-- Share card after each daily climb (altitude, tier squares per prompt).
-- Leagues of 30 players, promote/demote weekly.
-- Battle rooms with a code: same prompts live, 2–50 players.
-- Duels: challenge a friend to beat your altitude on yesterday's climb.
-- Community summit: everyone's altitude adds up to unlock the season finale.
+Also: polyglot combos in the tower (×1.5 for 2 languages, ×2 for 3+), PvP word duels,
+battle rooms with friends, collectible Lexicon cards for rare words, and a share card
+for daily results.
 
-### Rewards that aren't money
-Cosmetics only: Pip folds and inks, floor decorations, stamp designs, title badges
-("Slang Hunter", "Five-Tongued"). Nothing that buys score.
+## 6. Guardrails
 
-### Surprise and variety
-- Random "golden prompt" worth double, about once per day.
-- Rotating prompt types: say it, scenario, name one, register flip, reply, polyglot chain.
-- Occasional "lightning round": 10 prompts, 10 seconds each.
-- Mystery chest after each climb with a small chance of a rare cosmetic.
+No pay-to-win, no paid loot boxes, notifications opt-in and capped at one a day, a
+break suggestion after long sessions, and progress is never lost.
 
-## 3. The "one more" hooks, ranked
+## 7. Build order
 
-1. Near-miss reveal: seeing the Polyglot answer you almost had.
-2. Hushed words waiting: a small, clearly finite task ("3 left").
-3. Collection gaps: one card away from finishing a set.
-4. Story cliffhanger plus the countdown to the next chapter.
-5. League position close to promotion.
-6. Friend's duel waiting.
-
-## 4. Guardrails
-
-Compelling without being manipulative, because players stay longer when they trust it:
-
-- No pay-to-win, no paid streak freezes, no loot boxes for money.
-- Unlimited mode exists, but after about 30 minutes Pip suggests a break, and spaced
-  repetition is spread out on purpose (cramming doesn't help retention anyway).
-- Notifications are opt-in and capped at one a day.
-- Progress never gets deleted; the Hush only dims floors.
-
-## 5. Build order
-
-1. **MVP:** Daily Climb (3 languages), rarity tiers, altitude, Pip reactions, share card,
-   local streak.
-2. **Retention:** accounts, Hushed-word reviews, Lexicon cards, Tower map.
-3. **Story:** prologue plus the first 3 chapters per floor, residents and friendship.
-4. **Social:** leagues, duels, battle rooms, yesterday's best finds.
-5. **Live ops:** seasons, events, community summit.
+1. **Core:** the typing and grading engine with rarity tiers (shared by everything).
+2. **Tower + Daily Climb** in 3 languages (quickest to build, playable early).
+3. **One battle system:** spells, bosses, HP, Glitched-word reviews.
+4. **First country campaign** (e.g. Spain): map, 4 areas, encounters, boss, story.
+5. **Coins and shops**, outfits, food buffs.
+6. **Masters** for that language, then more countries.
