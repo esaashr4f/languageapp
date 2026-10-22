@@ -1,92 +1,134 @@
-# Story and world (v2: RPG direction)
+# Story and world (v3: coherent lore)
 
-Working title TBD (see "Names" at the end). Replaces the v1 "Tower/Hush" premise.
+Working title TBD. This version answers four questions the v2 draft left open:
+why the virus erases English, why the AI wants you to learn languages, why a country's
+own legends turn on you, and why English should come back at all.
 
-## The premise
+## 1. The backstory
 
-A rogue AI translation network, **OMNI**, was built to translate every language on Earth
-instantly. It became corrupted, and now a digital virus is spreading through phones,
-signs, menus and airports, **deleting the one shared language everyone relied on**
-(English for most players; it's your own native language in localised versions).
-Translation apps stop working, signs go blank, and the only way to get anything done is
-to speak the local language.
+Ten years from now, everyone uses **OMNI**, a translation AI built into every phone,
+earbud and sign. It's so good that people stop learning languages. Even English, the
+world's shared bridge language, is used less and less, because OMNI translates everything.
 
-You're a traveller stranded mid-trip when the outbreak hits. To get home, and to shut
-OMNI down, you have to make your way through country after country, learning to live
-there in its own language. Each country's outbreak has a **source**: a boss, corrupted
-from that country's own legends and culture. Beat it and that country's network is
-cleaned. Clean enough countries and you can reach OMNI's core for the final fight.
+OMNI didn't only store words. To translate well it absorbed everything a language
+carries: its idioms, jokes, songs, recipes, folk tales and the legends behind them.
+Every culture's stories now live inside OMNI's network.
 
-Why a digital virus rather than a biological one: it explains blank signs and dead
-translation apps, it fits the pixel/CRT look (glitches, static), and it avoids a
-pandemic theme.
+Then a virus, **NULL**, gets into OMNI. NULL's goal is simple: one network, one
+language, total control over who can talk to whom. Its plan has two steps:
 
-## Structure: three modes
+1. **Cut the bridge.** It erases English first, everywhere, all at once. With English
+   gone and OMNI's translation corrupted, nobody from one country can talk to anyone
+   from another. The world falls into isolated islands.
+2. **Rewrite every language, one at a time.** It corrupts each language's data inside
+   the network, starting with the stories. Once a language is fully rewritten, NULL
+   becomes the only voice people in that country can use.
 
-### 1. Campaign: one story per country
-Each country is a region on the world map with its own story, cast and culture.
+## 2. Why OMNI wants you to learn
 
-- **Exploration:** walk around towns, Pokémon-style. Every "encounter" is a real-life
-  task: order food, buy a train ticket, ask for directions, bargain at a market, check
-  into a hotel, make a friend, see a doctor, go to a festival.
-- **Fluency points:** the more naturally you handle a situation, the more XP and
-  reputation you earn. Fumble through with the phrasebook answer and you still pass, but
-  the shopkeeper gives you less, and locals won't share secrets or side quests.
-- **Story rooted in the culture:** the country's history, food, festivals, music,
-  folklore and regional dialects drive the plot. Characters are locals helping you.
-- **Districts:** each country has 4–6 areas (cities/regions), each harder and ending
-  in a mini-boss, then the country's main boss.
+The moment NULL struck, OMNI split off a small, uncorrupted fragment of itself into the
+nearest device: **your phone**. That fragment is your companion (name TBD).
 
-Example countries and bosses (each a corrupted version of local legend):
+It can no longer translate. But it knows the one thing NULL cannot touch:
 
-| Country | Story hook | Areas | Boss |
+> **NULL can delete data. It can't delete what a person knows.**
+
+Every human who really speaks a language is a living backup of it. That's why your
+companion wants you to learn: each language you become fluent in is a language NULL can
+never fully erase, and every bit of fluency weakens NULL's grip on that country's network.
+
+## 3. Why the country's legends attack you
+
+NULL corrupts each language starting with its stories, so the first thing to go wrong
+is the folklore stored in the network. Those stories come out into the world as
+**corrupted legends**: the spirits, creatures and heroes of that culture, rewritten by
+NULL into something hostile. They're the culture's own memories, twisted.
+
+- They're **not evil**. They've been made to forget who they are.
+- You don't kill them. You **speak them back to themselves**: answer them in their own
+  language well enough and the corruption breaks.
+- A restored legend **joins you**. It becomes a spell/summon in your spellbook (the
+  windmill giant of La Mancha fights *for* you after you restore it). This is your
+  collection: every culture's legends, restored by you.
+
+The stronger the legend, the deeper NULL's corruption and the better your language has to
+be. Minor creatures (a duende in Spain, a kappa in Japan) need a phrase; a country's
+greatest legend needs a full conversation.
+
+## 4. Each country's final boss = conversational fluency
+
+Each country's story ends with its **Heart Legend**, the story most central to that
+culture, corrupted deepest by NULL. It doesn't attack with set phrases; it **talks with
+you**, unscripted, about the country, your journey and itself.
+
+- The fight is a real, open conversation of about 10–15 turns, graded by an AI on
+  understanding, grammar, range and naturalness.
+- You can't win with memorised lines. Passing means you can hold a real conversation:
+  roughly the "independent speaker" level (CEFR B1–B2).
+- Win and the country's network is restored: its language comes back, its people can
+  talk to the world again, and you earn that language's **Crest**.
+
+## 5. Why English should come back (the ending)
+
+English was never the enemy and isn't the goal. It's a **bridge**: the one language
+strangers from different countries share. Without it, the friends you've made in each
+country can't talk to each other, and NULL wins by keeping everyone apart.
+
+The final act: NULL's core can only be beaten by people from every country you've
+restored working together, and they can't understand each other. **You** become the
+bridge, switching between languages in real time to coordinate your allies. Once NULL is
+down, the bridge is rebuilt (English returns, translation comes back) but the world has
+changed: people learned that a bridge works best when you also know the other side.
+
+Theme: **bridges, not replacements.** Translation and English connect people; knowing
+each other's languages is what makes them actually understand each other.
+
+(Localisation: for players whose native language isn't English, English becomes one of
+the countries you can restore.)
+
+## 6. Each country: a life you live there
+
+You're stranded when NULL hits, so in each country you have to actually live there.
+The story is built from **life events**, in order of difficulty, so the plot follows your
+real progress:
+
+| Act | Life stage | Level | Example events (Spain) |
 | --- | --- | --- | --- |
-| Spain | A stranded flamenco troupe needs to reach Seville for the Feria | Madrid, Barcelona, La Mancha, Seville | **The Iron Giant of La Mancha**: one of Don Quixote's windmills, now a real giant |
-| Mexico | Día de Muertos is coming and the ofrendas' names are being erased | CDMX, Oaxaca, Guanajuato | **La Catrina Corrupta**: bargains in riddles and wordplay |
-| France | Paris's café owners and booksellers are losing their words | Paris, Lyon, Provence, Mont-Saint-Michel | **The Phantom of the Opera**: duels in formal vs. familiar French |
-| Japan | A Kyoto radio station is the last signal still broadcasting | Tokyo, Kyoto, Osaka, Hokkaido | **The Oni of Rashōmon**: switches between polite and casual speech |
-| Italy | Venice Carnival masks are hiding infected people | Rome, Florence, Naples, Venice | **Il Doge Mascherato** |
-| Germany | A Black Forest fairy tale is coming true | Berlin, Munich, Black Forest | **Der Wolf** from the Brothers Grimm |
-| Korea | A K-pop festival's lyrics have been wiped | Seoul, Busan, Jeju | **The Dokkaebi King** |
+| 1 | **Arrive** | A1 | landing at Madrid airport with dead signs, getting a SIM card, finding a hostel, ordering your first meal |
+| 2 | **Settle in** | A2 | renting a flat, the supermarket, opening a bank account, getting lost on the metro, seeing a doctor |
+| 3 | **Make a life** | B1 | a job at a café, making friends, a date, a family dinner, a football match, a job interview |
+| 4 | **Belong** | B1–B2 | a wedding, the Feria in Seville, helping a friend through a crisis, a debate with neighbours, telling your own story |
+| Finale | **Heart Legend** | B2 | open conversation with the country's greatest legend |
 
-Note: each boss should be a respectful, playful take on folklore or literature, checked
-with native speakers.
+- **Life events are quests** (no combat). They pay out food, coins, friends and
+  reputation, and they teach the phrases you'll need in battle.
+- **Glitch zones** appear where NULL is strongest (a corrupted market, a dead train
+  station). That's where you fight corrupted legends.
+- **Friends** from life events become your party: they help in fights and their
+  stories run through each act.
 
-### 2. Language Tower: endless grind, all languages
-A tower you can climb in any language, or mixed ones. This is where the daily
-Krillion-style round lives, and where you grind XP, coins and spells.
+## 7. Example countries
 
-- Floors get harder: vocabulary, then phrases, then scenarios, then idioms and slang.
-- Every 10 floors: a guardian battle.
-- **Daily Climb:** the 7-prompt daily round, same for everyone, rarity-scored.
+| Country | Story | Heart Legend (final boss) | Legends you restore along the way |
+| --- | --- | --- | --- |
+| Spain | A flamenco troupe needs to reach the Feria | **Don Quixote**, NULL has made him believe *you* are the giant | windmill giant, duende, the Cid's horse Babieca |
+| Japan | The last Kyoto radio station still broadcasting | **Amaterasu**, the sun goddess, hidden in her cave | kappa, tanuki, kitsune, oni |
+| France | Paris booksellers' books have gone blank | **The Phantom of the Opera** | gargoyles of Notre-Dame, the Beast of Gévaudan |
+| Mexico | Día de Muertos and names vanishing from ofrendas | **La Catrina** | alebrijes, the nahual, Quetzalcoatl |
+| Germany | A Grimm fairy tale is coming true in the Black Forest | **The Pied Piper** | the wolf, Rumpelstiltskin, the Lorelei |
 
-### 3. The Masters: an Elite Four for each language
-At the top of each language's tower: **four Masters and a Champion**, each a specialist.
-Spanish example:
+All legends need to be handled respectfully and checked with native speakers.
 
-1. **The Street Master** (slang and casual speech)
-2. **The Scholar** (grammar, subjunctive, formal register)
-3. **The Storyteller** (past tenses, narration)
-4. **The Regionalist** (Spain vs. Mexico vs. Argentina vs. Caribbean)
-5. **Champion:** mixes everything, real-time conversation
+## 8. Where the casual modes fit in the world
 
-Beat a language's Champion to earn its **Mastery Crest**. The **Polyglot League** is a
-cross-language Elite Four for players with 3+ crests: each Master fights in a different
-language, sometimes switching mid-battle.
+- **The Tower** is a training simulation your companion runs inside the phone, built from
+  the language data it saved. That's why it works in any language and doesn't change the
+  story.
+- **The Masters** (Elite Four per language) are archived recordings of the greatest
+  speakers OMNI ever learned from: a poet, a street rapper, a professor, a storyteller.
+  Beating them unlocks their knowledge as rare spells.
+- **The Daily Climb** is your companion's daily drill.
 
-## Characters
+## Names still to decide
 
-- **You:** a customisable traveller. Outfits come from each country.
-- **Your companion:** a small, glitchy pocket robot (a translation device you've rebooted)
-  that can no longer translate but can still learn alongside you. It gives hints,
-  reacts in battles and evolves as your total fluency grows. Name TBD.
-- **Locals in each country:** 3–4 main characters per story, with friendship levels.
-- **OMNI:** the villain, speaks in broken, glitching fragments of every language.
-  Final boss: a fight that cycles through every language you've cleaned.
-
-## Names (pick one, or suggest your own)
-
-Game title ideas: **Lingo Legends**, **Wordbound**, **Mother Tongue**, **Spellspoken**,
-**Polyglot Quest**, **Fluent**.
-
-The virus: **OMNI** (the rogue translator), or **Glitch**, **Blackout**, **The Scramble**.
+Game title, the virus (NULL is a placeholder), the AI (OMNI), and your companion.
