@@ -19,6 +19,11 @@ Duels) and a story mode share one profile.
 - **Spain, Act 1 (Mercado de la Luz):** a full market with eight stalls, Spanish signs, a
   fountain plaza, and stallholders and passers-by to chat with; Carmen's "first order"
   life event; the corrupted duende legend battle.
+- **Free conversations:** chat with any stallholder about anything, in Spanish. They reply
+  in character and recast your mistakes; OMNI adds short corrections; daily/monthly limits
+  per plan (Claude via `/api`, demo replies without a key).
+- **Smarter battles:** OMNI coaches every line with a goal; replies not on the answer list
+  are rated by Claude with a shared rubric (Faint / Clear / Natural / Local).
 - **Accounts:** sign in with Google, Apple, Facebook or Discord (Supabase) to save progress
   to the cloud; guests save on the device. See `docs/setup.md`.
 
@@ -57,6 +62,7 @@ The EN chip toggles English subtitles.
 - `docs/story-and-world.md`: lore, why legends attack, country stories, life events, ending
 - `docs/gamification.md`: casual vs story mode, battles, food, coins, progression, build order
 - `docs/setup.md`: deploying on Vercel and turning on log-in (Supabase + providers)
-- `docs/ai-integration.md`: how Claude grades answers and voices the legends (Haiku + Opus)
+- `docs/ai-integration.md`: how Claude grades answers, voices characters, and plan limits
+- `docs/characters.md`: every character's card (generated from `src/content/characters.ts`)
 - `docs/polyglot-game-design.md`: daily round, rarity tiers and grading
 - `research/krillion/`: teardown of Krillion (the inspiration) plus a style demo

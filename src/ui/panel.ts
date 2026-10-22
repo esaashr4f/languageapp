@@ -38,6 +38,16 @@ export interface AskOpts {
   coach?: string;
 }
 
+export interface TalkOpts {
+  who: SpeakerId;
+  name?: string;
+  line: string;
+  gloss?: string;
+  note?: string | null;
+  meter?: string;
+  actions: { id: string; label: string }[];
+}
+
 export interface ResultView {
   tier: TierId | null;
   headline: string;
@@ -362,6 +372,81 @@ class Panel {
     } finally {
       this.end();
     }
+  }
+
+  /**
+   * One step of a free conversation: the other person's line, optional OMNI note, the
+   * answer box and extra actions (ideas, goodbye). Resolves with what the player typed or
+   * the action they picked.
+   */
+  async talk(opts: TalkOpts): Promise<{ text: string } | { action: string }> {
+    this.begin();
+    try {
+      return await new Promise((resolve) => {
+        const box = this.box(opts.who, opts.name);
+        box.classList.add('asking');
+        box.append(el('p', 'text', opts.line));
+        if (opts.gloss && this.showGloss) box.append(el('p', 'gloss', opts.gloss));
+        if (opts.note) {
+          const note = el('p', 'coach');
+          note.append(el('b', '', 'OMNI'), document.createTextNode(` ${opts.note}`));
+          box.append(note);
+        }
+        const form = el('form', 'answer');
+        const input = el('input');
+        Object.assign(input, { type: 'text', autocomplete: 'off', spellcheck: false, lang: 'es', placeholder: 'Di algo… (say something)', maxLength: 400 });
+        input.setAttribute('autocapitalize', 'off');
+        input.setAttribute('aria-label', 'Your message');
+        const submit = el('button', 'btn', 'SAY ▶');
+        submit.type = 'submit';
+        form.append(input, submit);
+        box.append(form);
+
+        const row = el('div', 'accents');
+        for (const ch of ACCENTS) {
+          const key = el('button', 'chip', ch);
+          key.type = 'button';
+          key.onpointerdown = (e) => e.preventDefault();
+          key.onclick = () => {
+            input.setRangeText(ch, input.selectionStart ?? input.value.length, input.selectionEnd ?? input.value.length, 'end');
+            input.focus();
+          };
+          row.append(key);
+        }
+        box.append(row);
+
+        const actions = el('div', 'talk-actions');
+        for (const a of opts.actions) {
+          const b = el('button', 'chip on', a.label);
+          b.type = 'button';
+          b.onclick = () => done({ action: a.id });
+          actions.append(b);
+        }
+        if (opts.meter) actions.append(el('span', 'meter', opts.meter));
+        box.append(actions);
+
+        const done = (value: { text: string } | { action: string }) => {
+          form.onsubmit = null;
+          input.disabled = true;
+          resolve(value);
+        };
+        form.onsubmit = (e) => {
+          e.preventDefault();
+          const text = input.value.trim();
+          if (text) done({ text });
+        };
+        input.focus();
+      });
+    } finally {
+      this.end();
+    }
+  }
+
+  /** A "they're thinking" box while waiting on the server. */
+  waiting(who: SpeakerId, name: string | undefined, text: string): void {
+    const box = this.box(who, name);
+    box.classList.add('asking');
+    box.append(el('p', 'text dots', text));
   }
 
   async result(view: ResultView): Promise<void> {

@@ -3,9 +3,10 @@ import { sfx } from '../audio';
 import { ITEMS, type ItemId } from '../content/items';
 import { DUENDE_BATTLE, SLOT_EXAMPLES, SLOTS } from '../content/spain/act1';
 import type { BattlePhase, LegendBattle } from '../content/types';
+import { rateBattleReply } from '../ai/client';
 import { fillSlots, grade, type Prompt } from '../engine/grader';
-import { tierById, tierRank } from '../engine/tiers';
-import { save, state } from '../state';
+import { tierById, tierRank, type TierId } from '../engine/tiers';
+import { cefr, save, state } from '../state';
 import { ui } from '../ui/panel';
 
 const BATTLES: Record<string, LegendBattle> = { [DUENDE_BATTLE.id]: DUENDE_BATTLE };
@@ -31,6 +32,7 @@ export class BattleScene extends Phaser.Scene {
   private steps: Phaser.GameObjects.Text[] = [];
   /** The line the legend is about to say; shown with OMNI's goal before you act. */
   private current: Prompt | null = null;
+  private history: { speaker: 'legend' | 'player'; text: string }[] = [];
 
   constructor() {
     super('Battle');
@@ -42,6 +44,7 @@ export class BattleScene extends Phaser.Scene {
     this.phaseIndex = 0;
     this.promptIndex = this.battle.phases.map(() => 0);
     this.current = null;
+    this.history = [];
     this.bonusTime = 0;
     this.ended = false;
     if (state.hp <= 0) state.hp = state.maxHp;
@@ -132,13 +135,31 @@ export class BattleScene extends Phaser.Scene {
     this.bonusTime = 0;
     const answer = await ui.ask({ who, line: prompt.line, gloss: prompt.gloss, timerSec, coach: prompt.goal });
     const result = grade(prompt, answer ?? '', SLOTS);
-    const better = result.better.map((a) => fillSlots(a.text, examples));
+    let better = result.better.map((a) => fillSlots(a.text, examples));
+    let detail = '';
+
+    // Not on the answer list? Ask the AI rater before calling it a miss.
+    if (!result.tier && answer) {
+      ui.waiting('omni', undefined, 'Checking your Spanish');
+      const ai = await rateBattleReply({
+        country: 'Spain', legendId: this.battle.id, phase: this.phase.id, playerName: state.name, playerLevel: cefr(),
+        history: this.history.slice(-10), legendLine: prompt.line, goal: prompt.goal ?? '', reply: answer,
+      });
+      if (ai) {
+        result.tier = ai.rating.level === 'NO_SIGNAL' ? null : (ai.rating.level.toLowerCase() as TierId);
+        better = [ai.rating.correction, ai.rating.better].filter((b): b is string => !!b);
+        detail = ai.rating.feedback;
+      }
+    }
+    this.history.push({ speaker: 'legend', text: prompt.line });
+    if (answer) this.history.push({ speaker: 'player', text: answer });
 
     if (!result.tier) {
       sfx.miss();
       await ui.result({
         tier: null,
         headline: answer === null ? 'Too slow! ANTI scrambled the moment.' : `"${answer}" didn't get through the static.`,
+        detail: detail || undefined,
         better,
       });
       await this.enemyAttack(this.phase.baseDamage + 2);
@@ -153,7 +174,7 @@ export class BattleScene extends Phaser.Scene {
     await ui.result({
       tier: result.tier,
       headline: `"${answer}"`,
-      detail: `${tier.blurb}. Corruption −${tier.clear}%`,
+      detail: `${detail || tier.blurb} · Corruption −${tier.clear}%`,
       better,
     });
     ui.updateHud();

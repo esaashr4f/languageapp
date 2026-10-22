@@ -32,7 +32,17 @@ site; Supabase shows the callback URL to paste there.
 Buttons stay greyed out until Supabase is configured. Enable all four, or remove the ones
 you don't want from `src/ui/accountView.ts`.
 
-## 4. Claude (next)
+## 4. Claude (conversations and smarter grading)
 
-`/api/turn` as a Vercel function, with `ANTHROPIC_API_KEY` in Vercel's environment
-variables. See `docs/ai-integration.md`.
+1. console.anthropic.com → API keys → create a key. Set a monthly spend limit.
+2. In Vercel → Environment Variables add:
+   - `ANTHROPIC_API_KEY` (server only, never prefixed with `VITE_`)
+   - `SUPABASE_URL` (same as `VITE_SUPABASE_URL`)
+   - `SUPABASE_SERVICE_ROLE_KEY` (Supabase → Settings → API; server only, it bypasses
+     row-level security so the server can record usage)
+3. Re-run `supabase/schema.sql` (it adds the `entitlements` table) and redeploy.
+
+Locally, put the same variables in `.env.local` and run `npm run dev`: the dev server runs
+the `/api` functions too. Without a key, conversations use canned demo replies.
+
+See `docs/ai-integration.md` for how it works and the plan limits.

@@ -246,3 +246,13 @@ button, input { font: inherit; color: inherit; }
 .stats-grid span { display: block; color: var(--ink-muted); font-size: 16px; letter-spacing: 0.08em; text-transform: uppercase; }
 .stats-grid b { font-weight: 400; font-size: 22px; }
 .row { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+
+/* Free conversations */
+.talk-actions { display: flex; gap: 8px; align-items: center; margin-top: 12px; flex-wrap: wrap; }
+.talk-actions .meter { margin-left: auto; color: var(--ink-muted); font-size: 18px; }
+.dots::after { content: ''; animation: dots 1.2s steps(4) infinite; }
+@keyframes dots { 0% { content: ''; } 25% { content: '.'; } 50% { content: '..'; } 75% { content: '...'; } }
+.plan-card { border: 2px solid var(--gold); padding: 10px 12px; margin-bottom: 18px; }
+.plan-card span { display: block; color: var(--ink-muted); font-size: 16px; letter-spacing: 0.08em; text-transform: uppercase; }
+.plan-card b { font-weight: 400; font-size: 26px; color: var(--gold); }
+.plan-card .btn:disabled { opacity: 0.5; cursor: not-allowed; }

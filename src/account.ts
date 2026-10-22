@@ -37,6 +37,22 @@ export function profile(): Profile | null {
   };
 }
 
+/** Sent to /api so the server knows who is talking (and what they're allowed). */
+export function accessToken(): string | null {
+  return session?.access_token ?? null;
+}
+
+/** The player's plan row (see supabase/schema.sql), or null for guests / dev builds. */
+export async function entitlement(): Promise<{ plan: 'free' | 'plus'; replies_used: number; credits: number } | null> {
+  if (!supabase || !session) return null;
+  const { data } = await supabase
+    .from('entitlements')
+    .select('plan, replies_used, credits')
+    .eq('user_id', session.user.id)
+    .maybeSingle();
+  return data ?? { plan: 'free', replies_used: 0, credits: 0 };
+}
+
 export function onAccountChange(fn: (profile: Profile | null) => void): void {
   listeners.push(fn);
 }

@@ -81,3 +81,9 @@ export function hasStory(): boolean {
 export function level(): number {
   return 1 + Math.floor(state.xp / 100);
 }
+
+/** Rough CEFR estimate from level, used to pitch AI characters at the player. */
+export function cefr(): string {
+  const lv = level();
+  return lv <= 2 ? 'A1' : lv <= 5 ? 'A2' : lv <= 9 ? 'B1' : lv <= 14 ? 'B2' : 'C1';
+}

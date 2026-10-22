@@ -8,9 +8,13 @@ import {
   AFTER_BATTLE, ARRIVAL, ARRIVE_AT, BENCHES, DEAD_STALL, FOUNTAIN, GLITCH_ZONE, LAMPS, MAP_COLS, MAP_ROWS,
   MARKET_NPCS, PLANTS, STALLS, type MarketNpc,
 } from '../content/spain/market';
+import { sendChat } from '../ai/client';
+import type { ChatRequest, LimitReason, QuotaStatus } from '../ai/schema';
+import { CHARACTERS } from '../content/characters';
+import type { Line } from '../content/types';
 import { fillSlots, grade } from '../engine/grader';
-import { tierById, tierRank } from '../engine/tiers';
-import { save, state } from '../state';
+import { tierById, tierRank, type TierId } from '../engine/tiers';
+import { cefr, save, state } from '../state';
 import { ui, type Dir } from '../ui/panel';
 
 const TILE = 16;
@@ -295,14 +299,125 @@ export class OverworldScene extends Phaser.Scene {
     if (!npc) return;
     // Face the player while talking.
     if (dx) npc.sprite.setFlipX(dx > 0);
-    if (npc.id === 'carmen') void this.script(() => this.talkToCarmen());
-    else if (npc.id === 'duende') {
-      if (state.flags.duendeRestored) void this.script(() => ui.say(DUENDE_RESTORED_IDLE));
+    if (npc.id === 'carmen') {
+      void this.script(async () => {
+        const canChat = state.flags.metCarmen && !(state.flags.duendeRestored && !state.flags.gotPaella);
+        await this.talkToCarmen();
+        if (canChat) await this.offerChat('carmen', 'CARMEN');
+      });
+    } else if (npc.id === 'duende') {
+      if (state.flags.duendeRestored) {
+        void this.script(async () => {
+          await ui.say(DUENDE_RESTORED_IDLE);
+          await this.offerChat('duende', 'DUENDE');
+        });
+      }
     } else if (npc.def) {
       const talk = npc.def.talks[npc.talkIndex % npc.def.talks.length];
       npc.talkIndex++;
-      const name = npc.def.name;
-      void this.script(() => ui.say(talk.map((line) => (line.who === 'npc' ? { ...line, name } : line))));
+      const def = npc.def;
+      void this.script(async () => {
+        await ui.say(talk.map((line) => (line.who === 'npc' ? { ...line, name: def.name } : line)));
+        if (CHARACTERS[def.id]) await this.offerChat(def.id, def.name);
+      });
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Free conversations (AI): talk about anything, for as long as the plan allows.
+
+  private quota: QuotaStatus | null = null;
+  private mockNoted = false;
+
+  private meter(): string | undefined {
+    if (!this.quota) return undefined;
+    return `💬 ${this.quota.remaining} left ${this.quota.plan === 'free' ? 'today' : 'this month'}`;
+  }
+
+  private async offerChat(npcId: string, name: string): Promise<void> {
+    const choice = await ui.choose('', [
+      { id: 'chat', label: '💬 CHAT', note: 'Talk about anything, in Spanish' },
+      { id: 'bye', label: '👋 BYE' },
+    ]);
+    if (choice === 'chat') await this.converse(npcId, name);
+  }
+
+  private limitLines(reason: LimitReason | 'offline', name: string): Line[] {
+    const resets = this.quota ? new Date(this.quota.resetsAt).toLocaleDateString(undefined, { day: 'numeric', month: 'long' }) : 'soon';
+    const goodbye: Line = { who: 'npc', name, text: '¡Bueno, tengo que seguir trabajando! ¡Hasta luego!', gloss: 'Well, I have to get back to work! See you later!' };
+    switch (reason) {
+      case 'sign_in_required':
+        return [{ who: 'omni', text: 'To keep long conversations going I need a secure line. Sign in from the title menu and I can open one.' }];
+      case 'conversation_limit':
+        return [goodbye, { who: 'omni', text: "Time to move on. ANTI's static creeps closer whenever we stay in one place too long." }];
+      case 'free_limit':
+        return [
+          goodbye,
+          { who: 'omni', text: "We need to go. Long conversations make my signal easy for ANTI to trace, and I've used up today's safe signal." },
+          { who: 'omni', text: 'It recharges tomorrow. (Free plan: a few conversations a day. Zaban+ lets us talk for much longer.)' },
+        ];
+      case 'plan_limit':
+        return [
+          goodbye,
+          { who: 'omni', text: `That's this month's signal used up. It recharges on ${resets}. If we need more before then, we can top up with conversation credits.` },
+        ];
+      case 'offline':
+        return [{ who: 'omni', text: "I can't reach the network right now. Let's try again in a bit." }];
+    }
+  }
+
+  private async converse(npcId: string, name: string): Promise<void> {
+    let line = '¿Qué tal? ¿De qué quieres hablar?';
+    let gloss = 'How are you? What do you want to talk about?';
+    let note: string | null = 'Chat about anything you like. Tap IDEAS if you get stuck, BYE to leave.';
+    let ideas = CHARACTERS[npcId].knows.slice(0, 3).map((k) => `Ask about ${k.toLowerCase()}`);
+    const history: ChatRequest['history'] = [{ speaker: 'npc', text: line }];
+
+    for (;;) {
+      const step = await ui.talk({
+        who: 'npc', name, line, gloss, note, meter: this.meter(),
+        actions: [{ id: 'ideas', label: '💡 IDEAS' }, { id: 'bye', label: '👋 BYE' }],
+      });
+      note = null;
+      if ('action' in step) {
+        if (step.action === 'bye') {
+          await ui.say([{ who: 'npc', name, text: '¡Hasta luego! Vuelve cuando quieras.', gloss: 'See you later! Come back any time.' }]);
+          return;
+        }
+        note = `Ideas: ${ideas.join(' · ')}`;
+        continue;
+      }
+
+      ui.waiting('npc', name, '');
+      const out = await sendChat({ country: 'Spain', npcId, playerName: state.name, playerLevel: cefr(), history, reply: step.text });
+      if ('quota' in out && out.quota) this.quota = out.quota;
+      if (!out.ok) {
+        await ui.say(this.limitLines(out.reason, name));
+        return;
+      }
+
+      const r = out.result;
+      history.push({ speaker: 'player', text: step.text }, { speaker: 'npc', text: r.npc.line });
+      const tier = r.rating.level === 'NO_SIGNAL' ? null : tierById(r.rating.level.toLowerCase() as TierId);
+      state.xp += tier ? Math.round(tier.points / 5) : 0;
+      save();
+      ui.updateHud();
+      ui.toast(tier ? `${tier.label}: ${tier.blurb}` : 'No signal: try it in Spanish');
+      if (tier) sfx.tier(tierRank(tier.id));
+      else sfx.miss();
+
+      line = r.npc.line;
+      gloss = r.npc.gloss;
+      if (r.ideas.length) ideas = r.ideas;
+      note = r.omni_note ?? (r.rating.correction ? `Try: "${r.rating.correction}"` : null);
+      if (out.mock && !this.mockNoted) {
+        note = `${note ? `${note} ` : ''}(Offline demo: replies are canned until the AI is connected.)`;
+        this.mockNoted = true;
+      }
+      if (r.ended) {
+        await ui.say([{ who: 'npc', name, text: line, gloss }]);
+        return;
+      }
     }
   }
 
