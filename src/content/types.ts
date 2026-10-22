@@ -1,6 +1,6 @@
 import type { Prompt } from '../engine/grader';
 
-export type SpeakerId = 'omni' | 'carmen' | 'duende' | 'corrupt' | 'system';
+export type SpeakerId = 'omni' | 'voice' | 'self' | 'carmen' | 'duende' | 'corrupt' | 'system';
 
 export interface Line {
   who?: SpeakerId;

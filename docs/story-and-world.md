@@ -4,6 +4,35 @@ Working title TBD. This version answers four questions the v2 draft left open:
 why the virus erases English, why the AI wants you to learn languages, why a country's
 own legends turn on you, and why English should come back at all.
 
+## 0. The opening (Mystery Dungeon style)
+
+You don't get a menu of lore. You wake up inside it.
+
+1. **A voice in the dark.** Black screen, a voice with no name ("???"): "...can you hear
+   me? Please... you have to wake up."
+2. **Waking up.** The screen blinks open on a market in Madrid. You're lying on the stone
+   floor. Inner thoughts in italics: "Where... am I? I remember the plane... and then
+   nothing." It's strangely quiet; nobody is talking.
+3. **Your pocket buzzes.** Every app on your phone says ANTI in red, then a small glowing
+   face appears: OMNI. "Oh, thank goodness. You're awake!"
+4. **"Let me explain from the beginning."** A flashback in illustrated panels, narrated
+   by OMNI:
+   - *Ten years ago:* OMNI is built, the planet lit up by its network.
+   - *Every language:* people talking in every language through OMNI; it learns their
+     stories and legends too.
+   - *And then:* people stop learning languages, even English fades.
+   - *Three days ago:* data centre after data centre turns red. ANTI appears.
+   - *Last night:* ANTI erases English. The network links snap; the word ENGLISH glitches
+     away. The world turns into islands.
+   - *Now:* a book's words vanish and a legend climbs out, corrupted.
+   - *Your pocket:* OMNI hid a fragment of itself in your phone. "ANTI can delete data.
+     It can't delete what a person knows."
+5. **Why you can't remember.** You were wearing OMNI earbuds when ANTI's pulse went
+   through the network; the feedback knocked you out. Your recent memories are fuzzy, and
+   OMNI's records about you are strangely corrupted (a mystery thread for later: why were
+   you in Madrid, and why does ANTI seem interested in you?).
+6. **Your name** is the first thing ANTI can't touch. Then OMNI points you to Carmen.
+
 ## 1. The backstory
 
 Ten years from now, everyone uses **OMNI**, a translation AI built into every phone,
@@ -14,35 +43,35 @@ OMNI didn't only store words. To translate well it absorbed everything a languag
 carries: its idioms, jokes, songs, recipes, folk tales and the legends behind them.
 Every culture's stories now live inside OMNI's network.
 
-Then a virus, **NULL**, gets into OMNI. NULL's goal is simple: one network, one
+Then a virus that calls itself **ANTI** gets into OMNI. ANTI's goal is simple: one network, one
 language, total control over who can talk to whom. Its plan has two steps:
 
 1. **Cut the bridge.** It erases English first, everywhere, all at once. With English
    gone and OMNI's translation corrupted, nobody from one country can talk to anyone
    from another. The world falls into isolated islands.
 2. **Rewrite every language, one at a time.** It corrupts each language's data inside
-   the network, starting with the stories. Once a language is fully rewritten, NULL
+   the network, starting with the stories. Once a language is fully rewritten, ANTI
    becomes the only voice people in that country can use.
 
 ## 2. Why OMNI wants you to learn
 
-The moment NULL struck, OMNI split off a small, uncorrupted fragment of itself into the
+The moment ANTI struck, OMNI split off a small, uncorrupted fragment of itself into the
 nearest device: **your phone**. That fragment is your companion (name TBD).
 
-It can no longer translate. But it knows the one thing NULL cannot touch:
+It can no longer translate. But it knows the one thing ANTI cannot touch:
 
-> **NULL can delete data. It can't delete what a person knows.**
+> **ANTI can delete data. It can't delete what a person knows.**
 
 Every human who really speaks a language is a living backup of it. That's why your
-companion wants you to learn: each language you become fluent in is a language NULL can
-never fully erase, and every bit of fluency weakens NULL's grip on that country's network.
+companion wants you to learn: each language you become fluent in is a language ANTI can
+never fully erase, and every bit of fluency weakens ANTI's grip on that country's network.
 
 ## 3. Why the country's legends attack you
 
-NULL corrupts each language starting with its stories, so the first thing to go wrong
+ANTI corrupts each language starting with its stories, so the first thing to go wrong
 is the folklore stored in the network. Those stories come out into the world as
 **corrupted legends**: the spirits, creatures and heroes of that culture, rewritten by
-NULL into something hostile. They're the culture's own memories, twisted.
+ANTI into something hostile. They're the culture's own memories, twisted.
 
 - They're **not evil**. They've been made to forget who they are.
 - You don't kill them. You **speak them back to themselves**: answer them in their own
@@ -51,14 +80,14 @@ NULL into something hostile. They're the culture's own memories, twisted.
   windmill giant of La Mancha fights *for* you after you restore it). This is your
   collection: every culture's legends, restored by you.
 
-The stronger the legend, the deeper NULL's corruption and the better your language has to
+The stronger the legend, the deeper ANTI's corruption and the better your language has to
 be. Minor creatures (a duende in Spain, a kappa in Japan) need a phrase; a country's
 greatest legend needs a full conversation.
 
 ## 4. Each country's final boss = conversational fluency
 
 Each country's story ends with its **Heart Legend**, the story most central to that
-culture, corrupted deepest by NULL.
+culture, corrupted deepest by ANTI.
 
 **How every legend fight works: it attacks, you bring it back.**
 
@@ -87,11 +116,11 @@ to the world again, and you earn that language's **Crest**.
 
 English was never the enemy and isn't the goal. It's a **bridge**: the one language
 strangers from different countries share. Without it, the friends you've made in each
-country can't talk to each other, and NULL wins by keeping everyone apart.
+country can't talk to each other, and ANTI wins by keeping everyone apart.
 
-The final act: NULL's core can only be beaten by people from every country you've
+The final act: ANTI's core can only be beaten by people from every country you've
 restored working together, and they can't understand each other. **You** become the
-bridge, switching between languages in real time to coordinate your allies. Once NULL is
+bridge, switching between languages in real time to coordinate your allies. Once ANTI is
 down, the bridge is rebuilt (English returns, translation comes back) but the world has
 changed: people learned that a bridge works best when you also know the other side.
 
@@ -103,7 +132,7 @@ the countries you can restore.)
 
 ## 6. Each country: a life you live there
 
-You're stranded when NULL hits, so in each country you have to actually live there.
+You're stranded when ANTI hits, so in each country you have to actually live there.
 The story is built from **life events**, in order of difficulty, so the plot follows your
 real progress:
 
@@ -117,7 +146,7 @@ real progress:
 
 - **Life events are quests** (no combat). They pay out food, coins, friends and
   reputation, and they teach the phrases you'll need in battle.
-- **Glitch zones** appear where NULL is strongest (a corrupted market, a dead train
+- **Glitch zones** appear where ANTI is strongest (a corrupted market, a dead train
   station). That's where you fight corrupted legends.
 - **Friends** from life events become your party: they help in fights and their
   stories run through each act.
@@ -126,7 +155,7 @@ real progress:
 
 | Country | Story | Heart Legend (final boss) | Legends you restore along the way |
 | --- | --- | --- | --- |
-| Spain | A flamenco troupe needs to reach the Feria | **Don Quixote**, NULL has made him believe *you* are the giant | windmill giant, duende, the Cid's horse Babieca |
+| Spain | A flamenco troupe needs to reach the Feria | **Don Quixote**, ANTI has made him believe *you* are the giant | windmill giant, duende, the Cid's horse Babieca |
 | Japan | The last Kyoto radio station still broadcasting | **Amaterasu**, the sun goddess, hidden in her cave | kappa, tanuki, kitsune, oni |
 | France | Paris booksellers' books have gone blank | **The Phantom of the Opera** | gargoyles of Notre-Dame, the Beast of Gévaudan |
 | Mexico | Día de Muertos and names vanishing from ofrendas | **La Catrina** | alebrijes, the nahual, Quetzalcoatl |
@@ -147,4 +176,4 @@ All legends need to be handled respectfully and checked with native speakers.
 
 ## Names still to decide
 
-Game title, the virus (NULL is a placeholder), the AI (OMNI), and your companion.
+Game title and the name of your companion (the OMNI fragment in your phone).

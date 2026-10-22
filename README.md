@@ -1,14 +1,14 @@
 # Language RPG (title TBD)
 
-A language-learning RPG for polyglots. A virus called NULL has broken into OMNI, the
+A language-learning RPG for polyglots. A virus called ANTI has broken into OMNI, the
 world's translation AI, erased English and started rewriting every language. Live
 through each country, restore its corrupted legends by speaking to them, and become
-the living backup NULL can't delete. Casual modes (Daily Climb, Tower, Bridge Rush,
+the living backup ANTI can't delete. Casual modes (Daily Climb, Tower, Bridge Rush,
 Duels) and a story mode share one profile.
 
 ## Prototype: Spain, Act 1 (El Mercado)
 
-A playable slice: OMNI's prologue, a market in Madrid, Carmen's "first order" life
+A playable slice: the opening (wake up with no memory, OMNI explains everything in an illustrated flashback), a market in Madrid, Carmen's "first order" life
 event, and a legend battle against the corrupted market duende.
 
 ```bash
@@ -45,5 +45,6 @@ The EN chip toggles English subtitles.
 
 - `docs/story-and-world.md`: lore, why legends attack, country stories, life events, ending
 - `docs/gamification.md`: casual vs story mode, battles, food, coins, progression, build order
+- `docs/ai-integration.md`: how Claude grades answers and voices the legends (Haiku + Opus)
 - `docs/polyglot-game-design.md`: daily round, rarity tiers and grading
 - `research/krillion/`: teardown of Krillion (the inspiration) plus a style demo

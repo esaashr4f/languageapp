@@ -103,7 +103,7 @@ export function makeTiles(scene: Phaser.Scene): void {
     for (const y of [4, 9, 14]) rect(ctx, 0, y, 16, 1, '#8f6c47');
   });
 
-  // Three frames of NULL static, cycled at random for the glitch zone.
+  // Three frames of ANTI static, cycled at random for the glitch zone.
   const glitchColors = ['#ff5252', '#59c8ff', '#7cf5b0', '#3b3560', '#f1ecff'];
   for (let f = 0; f < 3; f++) {
     canvasTexture(scene, `t_glitch${f}`, 16, 16, (ctx) => {

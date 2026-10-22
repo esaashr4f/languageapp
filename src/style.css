@@ -98,6 +98,8 @@ button, input { font: inherit; color: inherit; }
   animation: box-in 0.16s ease-out;
 }
 .box.asking, .box.result { cursor: default; }
+.speaker-self .text { color: #c9c2ea; font-style: italic; }
+.speaker-voice { border-color: #59c8ff; }
 .speaker-corrupt { border-color: var(--danger); animation: box-in 0.16s ease-out, jitter 0.3s steps(2) 2; }
 .who {
   position: absolute; top: -15px; left: 12px; background: #000; padding: 0 8px;

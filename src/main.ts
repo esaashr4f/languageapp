@@ -3,6 +3,7 @@ import './style.css';
 import { BattleScene } from './scenes/BattleScene';
 import { BootScene } from './scenes/BootScene';
 import { OverworldScene } from './scenes/OverworldScene';
+import { StoryScene } from './scenes/StoryScene';
 import { TitleScene } from './scenes/TitleScene';
 import { ui } from './ui/panel';
 
@@ -22,7 +23,7 @@ async function start(): Promise<void> {
     pixelArt: true,
     backgroundColor: '#05030c',
     scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
-    scene: [BootScene, TitleScene, OverworldScene, BattleScene],
+    scene: [BootScene, TitleScene, OverworldScene, StoryScene, BattleScene],
   });
 }
 

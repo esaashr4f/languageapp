@@ -60,6 +60,9 @@ export const sfx = {
   glitch: () => {
     for (let i = 0; i < 5; i++) tone(200 + Math.random() * 900, 0.03, 'square', 0.02, i * 0.03);
   },
+  buzz: () => {
+    for (let i = 0; i < 2; i++) tone(70, 0.18, 'sawtooth', 0.05, i * 0.28);
+  },
   restore: () => {
     [784, 988, 1175, 1568, 1976].forEach((f, i) => tone(f, 0.14, 'triangle', 0.05, i * 0.09));
   },

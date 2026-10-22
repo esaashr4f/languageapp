@@ -2,9 +2,9 @@ import Phaser from 'phaser';
 import { sfx } from '../audio';
 import {
   CARMEN_AFTER_ALL, CARMEN_AFTER_ORDER, CARMEN_GREETING, CARMEN_IDLE, CARMEN_MISS, CARMEN_ORDER, CARMEN_REWARD,
-  CARMEN_SERVED, CARMEN_SERVED_NATIVE, DUENDE_BATTLE, DUENDE_RESTORED_IDLE, NEED_WORDS, PROLOGUE,
-  PROLOGUE_AFTER_NAME, SLOT_EXAMPLES, SLOTS,
+  CARMEN_SERVED, CARMEN_SERVED_NATIVE, DUENDE_BATTLE, DUENDE_RESTORED_IDLE, NEED_WORDS, SLOT_EXAMPLES, SLOTS,
 } from '../content/spain/act1';
+import { AFTER_NAME, AFTER_STORY, ASK_NAME, DARK_VOICE, PHONE_BUZZ, WAKE_UP } from '../content/intro';
 import { fillSlots, grade } from '../engine/grader';
 import { tierRank } from '../engine/tiers';
 import { save, state } from '../state';
@@ -100,7 +100,7 @@ export class OverworldScene extends Phaser.Scene {
 
     this.time.addEvent({ delay: 120, loop: true, callback: () => this.animateGlitch() });
 
-    if (!state.flags.prologue) void this.script(() => this.prologue());
+    if (!state.flags.prologue) void this.script(() => this.intro());
     else if (state.flags.duendeRestored && !state.flags.gotPaella) {
       void this.script(() => ui.say([{ who: 'omni', text: 'Carmen will want to hear about this. Go talk to her!' }]));
     } else this.idle();
@@ -233,18 +233,70 @@ export class OverworldScene extends Phaser.Scene {
     else if (state.flags.duendeRestored) void this.script(() => ui.say(DUENDE_RESTORED_IDLE));
   }
 
-  private async prologue(): Promise<void> {
-    await ui.say(PROLOGUE);
-    const name = await ui.ask({
-      who: 'omni',
-      line: "First things first. What should I call you?",
-      placeholder: 'Your name',
-      accents: false,
+  // ---------------------------------------------------------------------------
+  // Opening: a voice in the dark, waking up, OMNI calling from your pocket.
+
+  private cameraFade(kind: 'in' | 'out', ms: number): Promise<void> {
+    const cam = this.cameras.main;
+    return new Promise((resolve) => {
+      cam.once(kind === 'in' ? 'camerafadeincomplete' : 'camerafadeoutcomplete', () => resolve());
+      if (kind === 'in') cam.fadeIn(ms, 0, 0, 0);
+      else cam.fadeOut(ms, 0, 0, 0);
     });
+  }
+
+  private playStory(): Promise<void> {
+    return new Promise((resolve) => {
+      this.game.events.once('story-done', () => {
+        this.scene.stop('Story');
+        resolve();
+      });
+      this.scene.launch('Story');
+    });
+  }
+
+  private async intro(): Promise<void> {
+    const cam = this.cameras.main;
+    cam.fadeOut(0, 0, 0, 0);
+    this.player.setAngle(-90).setOrigin(0.5, 0.5).setY(this.player.y - 6);
+    await ui.say(DARK_VOICE);
+
+    // Eyes opening: blink, blink, then awake.
+    await this.cameraFade('in', 700);
+    await this.cameraFade('out', 200);
+    await this.cameraFade('in', 1100);
+    await ui.say(WAKE_UP);
+
+    // Get up.
+    sfx.move();
+    await new Promise<void>((resolve) =>
+      this.tweens.add({
+        targets: this.player,
+        angle: 0,
+        y: this.player.y - 4,
+        duration: 260,
+        ease: 'Back.out',
+        onComplete: () => {
+          this.player.setOrigin(0.5, 1);
+          this.placePlayer();
+          resolve();
+        },
+      }),
+    );
+
+    sfx.buzz();
+    this.tweens.add({ targets: this.player, x: this.player.x + 1, duration: 40, yoyo: true, repeat: 5 });
+    await ui.say(PHONE_BUZZ);
+
+    await this.playStory();
+    await this.cameraFade('in', 600);
+    await ui.say(AFTER_STORY);
+
+    const name = await ui.ask({ who: 'omni', line: ASK_NAME, placeholder: 'Your name', accents: false });
     state.name = (name ?? 'Alex').slice(0, 16);
     state.flags.prologue = true;
     save();
-    await ui.say([{ who: 'omni', text: `Nice to meet you, ${state.name}.` }, ...PROLOGUE_AFTER_NAME]);
+    await ui.say(AFTER_NAME(state.name));
   }
 
   private async talkToCarmen(): Promise<void> {

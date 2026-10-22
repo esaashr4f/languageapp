@@ -9,6 +9,8 @@ import { level, state } from '../state';
 
 const SPEAKERS: Record<SpeakerId, { name: string; color: string; pitch: number }> = {
   omni: { name: 'OMNI', color: '#59c8ff', pitch: 880 },
+  voice: { name: '???', color: '#59c8ff', pitch: 880 },
+  self: { name: '', color: '#c9c2ea', pitch: 330 },
   carmen: { name: 'CARMEN', color: '#ffc247', pitch: 520 },
   duende: { name: 'DUENDE', color: '#7cf5b0', pitch: 700 },
   corrupt: { name: '???', color: '#ff5252', pitch: 170 },

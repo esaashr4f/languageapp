@@ -25,24 +25,10 @@ export const SLOT_EXAMPLES = (playerName: string): Record<string, string> => ({
 });
 
 // ---------------------------------------------------------------------------
-// Prologue
-
-export const PROLOGUE: Line[] = [
-  { text: 'Madrid. Mercado de la Luz. 09:41.' },
-  { text: 'Your phone buzzes. Every app on the screen shows the same word: NULL.' },
-  { who: 'omni', text: "Can you hear me? Good. I'm OMNI. Or what's left of it." },
-  { who: 'omni', text: 'A virus called NULL just erased English from the whole network. Signs, menus, apps... all gone.' },
-  { who: 'omni', text: "I kept one last copy of English hidden in your phone. Just enough for you and me." },
-];
-
-export const PROLOGUE_AFTER_NAME: Line[] = [
-  { who: 'omni', text: 'Out there, nobody can understand you anymore. Not unless you speak Spanish.' },
-  { who: 'omni', text: "NULL can delete data. It can't delete what you know. Every word you learn is one it can't take." },
-  { who: 'omni', text: "Let's start small. The woman at the stall over there looks friendly. Walk up and talk to her." },
-];
+// Market
 
 export const NEED_WORDS: Line[] = [
-  { who: 'omni', text: "Whoa, that's NULL's static. We're not ready for that yet." },
+  { who: 'omni', text: "Whoa, that's ANTI's static. We're not ready for that yet." },
   { who: 'omni', text: 'We need some words first. Try talking to someone in the market.' },
 ];
 
@@ -83,7 +69,7 @@ export const CARMEN_AFTER_ORDER: Line[] = [
   { text: 'You got 2× Churros! (+8 seconds on an answer in battle)' },
   { who: 'carmen', text: 'Pero ten cuidado... algo raro pasa en el puesto de fruta.', gloss: "But be careful... something strange is happening at the fruit stall." },
   { who: 'carmen', text: 'El duende del mercado... ya no es él.', gloss: "The market's duende... he's not himself anymore." },
-  { who: 'omni', text: "A duende is a house spirit from Spanish folklore. NULL must have corrupted him." },
+  { who: 'omni', text: "A duende is a house spirit from Spanish folklore. ANTI must have corrupted him." },
   { who: 'omni', text: "He's part of Spain's stories. Talk to him in Spanish and we can bring him back. The static is up north." },
 ];
 
@@ -113,10 +99,10 @@ export const DUENDE_BATTLE: LegendBattle = {
   corruptName: '??? (CORRUPTED)',
   trueName: 'DUENDE DEL MERCADO',
   intro: [
-    { who: 'omni', text: "There he is. NULL's static is all over him." },
+    { who: 'omni', text: "There he is. ANTI's static is all over him." },
     { who: 'omni', text: 'He will attack with words. Answer in Spanish. The more natural you sound, the more corruption you clear.' },
     { who: 'omni', text: 'Bad or slow answers hurt. Use ITEM for churros if you need more time. Ready?' },
-    { who: 'corrupt', text: '¡¿QUIÉN ANDA AHÍ?! ¡ESTE MERCADO ES DE NULL!', gloss: "WHO'S THERE?! THIS MARKET BELONGS TO NULL!" },
+    { who: 'corrupt', text: '¡¿QUIÉN ANDA AHÍ?! ¡ESTE MERCADO ES DE ANTI!', gloss: "WHO'S THERE?! THIS MARKET BELONGS TO ANTI!" },
   ],
   phases: [
     {
@@ -128,7 +114,7 @@ export const DUENDE_BATTLE: LegendBattle = {
       timerSec: 25,
       attacks: [
         { who: 'corrupt', text: '¡SILENCIO!', gloss: 'SILENCE!' },
-        { who: 'corrupt', text: '¡NULL MANDA AQUÍ!', gloss: 'NULL IS IN CHARGE HERE!' },
+        { who: 'corrupt', text: '¡ANTI MANDA AQUÍ!', gloss: 'ANTI IS IN CHARGE HERE!' },
         { who: 'corrupt', text: '¡NO TE ENTIENDO, INTRUSO!', gloss: "I DON'T UNDERSTAND YOU, INTRUDER!" },
       ],
       prompts: [
@@ -179,7 +165,7 @@ export const DUENDE_BATTLE: LegendBattle = {
       baseDamage: 4,
       timerSec: 25,
       attacks: [
-        { who: 'corrupt', text: '¡N-NULL... DICE QUE MIENTES!', gloss: 'N-NULL... SAYS YOU ARE LYING!' },
+        { who: 'corrupt', text: '¡A-ANTI... DICE QUE MIENTES!', gloss: 'A-ANTI... SAYS YOU ARE LYING!' },
         { who: 'corrupt', text: '¡MI CABEZA! ¡CÁLLATE!', gloss: 'MY HEAD! BE QUIET!' },
       ],
       prompts: [
@@ -271,6 +257,6 @@ export const DUENDE_BATTLE: LegendBattle = {
     { who: 'duende', text: '¡Ay...! Por fin. ¡Gracias, amigo!', gloss: 'Oh...! Finally. Thank you, friend!' },
     { who: 'duende', text: 'Soy el duende del mercado. Desde hoy, cuenta conmigo.', gloss: "I'm the market's duende. From today on, you can count on me." },
     { text: 'The DUENDE joined your spellbook! (+30 coins, +50 XP)' },
-    { who: 'omni', text: "We did it. That's one legend NULL can't have. Let's tell Carmen." },
+    { who: 'omni', text: "We did it. That's one legend ANTI can't have. Let's tell Carmen." },
   ],
 };

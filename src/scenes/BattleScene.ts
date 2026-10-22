@@ -129,7 +129,7 @@ export class BattleScene extends Phaser.Scene {
       sfx.miss();
       await ui.result({
         tier: null,
-        headline: answer === null ? 'Too slow! NULL scrambled the moment.' : `"${answer}" didn't get through the static.`,
+        headline: answer === null ? 'Too slow! ANTI scrambled the moment.' : `"${answer}" didn't get through the static.`,
         better,
       });
       await this.enemyAttack(this.phase.baseDamage + 2);
