@@ -3,7 +3,7 @@
 A language-learning RPG for polyglots. A virus inside the world's translation AI
 has erased English and is rewriting every language; live through each country,
 restore its corrupted legends by speaking to them, and become the living backup
-NULL can't delete. Casual modes (Daily Climb, Tower, Duels, Masters) and a
+NULL can't delete. Casual modes (Daily Climb, Tower, Bridge Rush, Duels) and a
 story mode share one profile.
 
 - `docs/polyglot-game-design.md`: daily round, rarity tiers and grading (v1; tower mode)

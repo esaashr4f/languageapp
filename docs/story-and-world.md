@@ -58,15 +58,30 @@ greatest legend needs a full conversation.
 ## 4. Each country's final boss = conversational fluency
 
 Each country's story ends with its **Heart Legend**, the story most central to that
-culture, corrupted deepest by NULL. It doesn't attack with set phrases; it **talks with
-you**, unscripted, about the country, your journey and itself.
+culture, corrupted deepest by NULL.
 
-- The fight is a real, open conversation of about 10–15 turns, graded by an AI on
-  understanding, grammar, range and naturalness.
-- You can't win with memorised lines. Passing means you can hold a real conversation:
-  roughly the "independent speaker" level (CEFR B1–B2).
-- Win and the country's network is restored: its language comes back, its people can
-  talk to the world again, and you earn that language's **Crest**.
+**How every legend fight works: it attacks, you bring it back.**
+
+- The legend attacks you with words: questions, accusations, demands and riddles in
+  the target language, fast and glitchy. Fail to answer, or answer badly, and you
+  lose HP.
+- It doesn't have an HP bar to knock down. It has a **Corruption bar**. Every good reply
+  clears some corruption, and the more natural your reply, the more it clears.
+- As the bar drops, the legend visibly comes back to itself, in three phases:
+  1. **Corrupted:** glitching sprite, hostile, fast attacks, broken phrases.
+  2. **Wavering:** flickers between corrupted and true form, remembers fragments of
+     its own story, attacks slow down.
+  3. **Remembering:** it stops attacking and **talks with you**, unscripted, about the
+     country, your journey and itself.
+- Clear the bar to zero and it's restored. It thanks you in its own words and joins you.
+
+**The Heart Legend is the hardest version of this.** Its final phase is a real, open
+conversation of about 10–15 turns, graded by an AI on understanding, grammar, range and
+naturalness. You can't win with memorised lines: passing means you can hold a real
+conversation, roughly the "independent speaker" level (CEFR B1–B2).
+
+Win and the country's network is restored: its language comes back, its people can talk
+to the world again, and you earn that language's **Crest**.
 
 ## 5. Why English should come back (the ending)
 
@@ -124,10 +139,11 @@ All legends need to be handled respectfully and checked with native speakers.
 - **The Tower** is a training simulation your companion runs inside the phone, built from
   the language data it saved. That's why it works in any language and doesn't change the
   story.
-- **The Masters** (Elite Four per language) are archived recordings of the greatest
-  speakers OMNI ever learned from: a poet, a street rapper, a professor, a storyteller.
-  Beating them unlocks their knowledge as rare spells.
+- **Bridge Rush** (in the Tower) trains for the finale, where you have to be the
+  bridge between languages: one English phrase, as many languages as you can in time.
 - **The Daily Climb** is your companion's daily drill.
+
+(The Masters / Elite Four idea is parked for now.)
 
 ## Names still to decide
 

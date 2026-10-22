@@ -14,7 +14,20 @@ For people who want a quick, fun daily game.
 | **Tower** | endless floors in any language or a mix; guardian fight every 10 floors | 2–10 min |
 | **Duels** | 1v1 against friends or random players: same prompts, best answers win | 2 min |
 | **Party rooms** | 2–50 friends with a room code | 5 min |
-| **Masters** | Elite Four + Champion per language; Polyglot League with 3+ crests | 5–10 min |
+| **Bridge Rush** (Tower) | an English phrase appears; say it in as many languages as you can before time runs out | 60–90 s |
+
+**Bridge Rush details:**
+
+- One English prompt ("Where's the train station?", "I'm hungry", "Nice to meet you").
+- 60 seconds (or 90 on a harder setting). Type the phrase in any language, submit, type it
+  in another, and so on. Each language counts once per prompt.
+- Score per language uses the normal tiers, so a natural answer is worth more than a
+  literal one. A **breadth bonus** grows with every extra language (×1.2 for the 2nd,
+  ×1.4 for the 3rd, and so on), so polyglots shine.
+- Round = 5 prompts. Leaderboards per prompt set, plus a weekly "Bridge Rush" event.
+- Languages you're not studying still count, so a learner may try a word in a new
+  language and find a reason to start it.
+- In the story, it's the training for the finale where you bridge your allies.
 
 Appeal: instant start, nothing to remember, shareable scores, leagues, and quick wins.
 Works great on a phone in a queue.
@@ -36,11 +49,15 @@ better.
 ## 2. Battle system
 
 - Turn-based. An enemy says something in the target language; you reply in time.
-- **Your reply is your attack.** The quality of what you say (tiers: Phrasebook ×1,
-  Textbook ×1.5, Conversational ×3, Native ×6, Regional ×8.5, Polyglot ×10) sets
-  the damage.
-- **Spell schools follow grammar:** commands strike, polite requests shield, thanks
-  and compliments heal, past-tense storytelling chains combos, idioms are ultimates.
+- **Enemies attack you; your reply brings them back.** Legends have a Corruption bar,
+  not HP. The quality of what you say (tiers: Phrasebook ×1, Textbook ×1.5,
+  Conversational ×3, Native ×6, Regional ×8.5, Polyglot ×10) sets how much corruption
+  you clear. Bad or late answers cost you HP.
+- **Three phases per legend:** Corrupted (hostile, fast), Wavering (flickering,
+  remembering fragments), Remembering (stops attacking and talks with you). See
+  `story-and-world.md` section 4.
+- **Spell schools follow grammar:** commands purge corruption, polite requests shield,
+  thanks and compliments heal, past-tense storytelling chains combos, idioms are ultimates.
   New grammar unlocks new schools (the subjunctive unlocks one).
 - **Restored legends are summons:** call the windmill giant with a Spanish idiom.
 - **Weaknesses:** each legend is weak to a skill (formal register, past tenses, slang).
@@ -85,7 +102,7 @@ Earned only by playing. Never buys power that money can buy.
 
 - **Daily:** Daily Climb, one life-event quest per country, Glitched words to clear,
   a streak (freezes earned by playing, never bought).
-- **Weekly:** a Master challenge, league results, a rotating event legend.
+- **Weekly:** a Bridge Rush event, league results, a rotating event legend.
 - **Seasons:** a new country or region, a festival event (Día de Muertos, Hanami,
   Carnival) timed with the real calendar.
 
@@ -101,4 +118,4 @@ suggestion after long sessions, progress never lost.
 3. **Battle system:** spells, legends, Glitched words, food buffs.
 4. **Story: Spain, Act 1** (Arrive): airport, hostel, first meal, first glitch zone.
 5. Acts 2–4 and the Heart Legend conversation, then coins, home, outfits.
-6. Masters, duels, then the next country.
+6. Bridge Rush, duels, then the next country.
