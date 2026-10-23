@@ -9,6 +9,7 @@ export const STALL_STYLES: Record<string, { stripes: [string, string]; goods: st
   churros: { stripes: ['#c2255c', '#f1ecff'], goods: ['#d4a373', '#7f4f24', '#e9c46a'] },
   bakery: { stripes: ['#8a5a2b', '#f2e7c6'], goods: ['#e9c46a', '#d4a373', '#a0522d'] },
   flowers: { stripes: ['#2f9e44', '#f1ecff'], goods: ['#ff6b9d', '#e03131', '#ffd43b', '#b18cff'] },
+  phones: { stripes: ['#343a40', '#f1ecff'], goods: ['#212529', '#59c8ff', '#adb5bd', '#e03131'] },
   spices: { stripes: ['#7048e8', '#f1ecff'], goods: ['#e03131', '#f59f00', '#ffd43b', '#2b8a3e'] },
   pottery: { stripes: ['#0b7285', '#f1ecff'], goods: ['#1c7ed6', '#f1ecff', '#c2410c'] },
 };

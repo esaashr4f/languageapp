@@ -356,6 +356,31 @@ A sour sixty-year-old who complains about everything: rent, politicians, tourist
   - ¿Qué miras? Si no vas a comprar, ¡fuera! _(What are you looking at? If you're not buying, out!)_
   - ¡Vete a la m*****! Aprende a hablar primero. _(Get lost! Learn to talk first.)_
 
+## Imran
+
+**Runs the phone stall (MÓVILES): SIM cards, chargers, repairs.**
+
+Quick, friendly, very practical Pakistani-Spanish shopkeeper who can fix any phone and knows everybody's business.
+
+- **Where:** Madrid market, phone stall.
+- **Backstory:** Came from Lahore twenty years ago, worked in a locutorio in Lavapiés, now has his own stall. His kids grew up in Madrid and speak Spanish, Urdu and English; since OMNI went down they translate for him on family calls.
+- **Personality:** practical, warm, fast-talking, proud dad
+- **Voice:** Fast, clear Madrid Spanish with shop patter ("¡Lo que necesites!"). Uses tú. Explains prices simply.
+- **Speaks:** Spanish (Spain), Urdu, Punjabi, some English (now gone) (pitched at A1–A2)
+- **Signature phrases:** "¡Lo que necesites!", "¡Listo!"
+- **Avoids:** English
+- **Openness:** very open
+- **When you make a mistake:** Doesn't care about grammar, cares about getting the job done: repeats the right word as he hands you things. "¿Una SIM? ¡Una tarjeta SIM, sí!"
+- **Opinions:**
+  - *family abroad:* Since OMNI went down, families split across countries depend on bilingual kids; he is proud of his and worried for families without them.
+  - *small business:* Big phone companies and online shops squeeze stalls like his; the market survives on trust and favours.
+- **Wants:** Customers, and for his kids to keep all their languages.
+- **Knows:** Phones, SIM cards, repairs; Lavapiés; Lahore
+- **Doesn't know:** What ANTI really is
+- **Cultural notes:** Locutorios (phone and internet shops) were a lifeline for immigrant families in Madrid, many run by South Asian and Latin American owners.
+- **Example lines:**
+  - ¡Listo! Ya tienes número español. _(Done! Now you've got a Spanish number.)_
+
 ## The Traveller
 
 **Another stranded traveller (future quest).**

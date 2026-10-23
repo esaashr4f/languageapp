@@ -30,6 +30,7 @@ export const STALLS: Stall[] = [
   { type: 'churros', x: 33, y: 13, sign: 'CHURROS' },
   { type: 'bakery', x: 8, y: 20, sign: 'PANADERÍA' },
   { type: 'flowers', x: 28, y: 20, sign: 'FLORES' },
+  { type: 'phones', x: 33, y: 20, sign: 'MÓVILES' },
 ];
 
 export const BENCHES = [
@@ -120,6 +121,14 @@ export const MARKET_NPCS: MarketNpc[] = [
       [say('Mi alquiler se ha triplicado. ¡Todo el edificio son pisos turísticos!', 'My rent has tripled. The whole building is tourist flats!')],
       [say('Y con las elecciones, todos prometen de todo. Luego, nada. Como siempre.', 'And with the elections, they all promise everything. Then nothing. As always.')],
       [say('El barrio ha cambiado tanto que ya no reconozco a nadie.', "The neighbourhood has changed so much I don't recognise anyone anymore.")],
+    ],
+  },
+  {
+    id: 'imran', sprite: 'imran', name: 'IMRAN', x: 34, y: 22,
+    talks: [
+      [say('¡Fundas, cargadores, tarjetas SIM! ¡Lo que necesites!', 'Cases, chargers, SIM cards! Whatever you need!')],
+      [say('Desde que llegó eso de ANTI, todo el mundo quiere un número nuevo.', 'Since this ANTI thing arrived, everyone wants a new number.')],
+      [say('Mi familia está en Lahore. Antes hablábamos con OMNI... ahora mis hijos les hablan en urdu.', 'My family is in Lahore. We used to talk through OMNI... now my kids speak to them in Urdu.')],
     ],
   },
   {

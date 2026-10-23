@@ -433,6 +433,29 @@ export const CHARACTERS: Record<string, Character> = {
     ],
   },
 
+  imran: {
+    id: 'imran', name: 'Imran', role: 'Runs the phone stall (MÓVILES): SIM cards, chargers, repairs.', where: 'Madrid market, phone stall.',
+    summary: 'Quick, friendly, very practical Pakistani-Spanish shopkeeper who can fix any phone and knows everybody\'s business.',
+    backstory: 'Came from Lahore twenty years ago, worked in a locutorio in Lavapiés, now has his own stall. His kids grew up in Madrid and speak Spanish, Urdu and English; since OMNI went down they translate for him on family calls.',
+    personality: ['practical', 'warm', 'fast-talking', 'proud dad'],
+    voice: 'Fast, clear Madrid Spanish with shop patter ("¡Lo que necesites!"). Uses tú. Explains prices simply.',
+    language: { speaks: 'Spanish (Spain), Urdu, Punjabi, some English (now gone)', pitchAt: 'A1–A2', signaturePhrases: ['¡Lo que necesites!', '¡Listo!'], avoid: ['English'] },
+    number: { gives: 'yes' },
+    numberLines: { yes: '¡Claro! Es mi negocio. Si se te rompe el móvil, me llamas.' },
+    chatOpener: { text: '¡Buenas! ¿Qué tal funciona el móvil?', gloss: "Hi! How's the phone working?" },
+    openness: 'very open',
+    onMistakes: 'Doesn\'t care about grammar, cares about getting the job done: repeats the right word as he hands you things. "¿Una SIM? ¡Una tarjeta SIM, sí!"',
+    opinions: [
+      { topic: 'family abroad', view: 'Since OMNI went down, families split across countries depend on bilingual kids; he is proud of his and worried for families without them.' },
+      { topic: 'small business', view: 'Big phone companies and online shops squeeze stalls like his; the market survives on trust and favours.' },
+    ],
+    wants: 'Customers, and for his kids to keep all their languages.',
+    knows: ['Phones, SIM cards, repairs', 'Lavapiés', 'Lahore'], doesNotKnow: ['What ANTI really is'],
+    culturalNotes: ['Locutorios (phone and internet shops) were a lifeline for immigrant families in Madrid, many run by South Asian and Latin American owners.'],
+    rules: [],
+    sampleLines: [{ text: '¡Listo! Ya tienes número español.', gloss: "Done! Now you've got a Spanish number." }],
+  },
+
   traveller: {
     id: 'traveller', name: 'The Traveller', role: 'Another stranded traveller (future quest).', where: 'Madrid market, by a bench.',
     summary: 'A tourist cut off like the player, but who has given up. Mirrors the player at the start.',

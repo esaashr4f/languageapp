@@ -30,6 +30,8 @@ export interface Option {
 
 export interface AskOpts {
   who?: SpeakerId;
+  /** Nameplate override (e.g. a market NPC's name). */
+  name?: string;
   line: string;
   gloss?: string;
   timerSec?: number;
@@ -316,7 +318,7 @@ class Panel {
     this.begin();
     try {
       return await new Promise<string | null>((resolve) => {
-        const box = this.box(opts.who);
+        const box = this.box(opts.who, opts.name);
         box.classList.add('asking');
         box.append(el('p', 'text', opts.line));
         if (opts.gloss && this.showGloss) box.append(el('p', 'gloss', opts.gloss));

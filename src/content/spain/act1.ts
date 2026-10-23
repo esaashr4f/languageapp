@@ -76,7 +76,8 @@ export const CARMEN_AFTER_ORDER: Line[] = [
   { text: 'You got 2× Churros! (+8 seconds on an answer in battle)' },
   { who: 'carmen', text: 'Y toma, mi número. Si necesitas algo, me llamas, ¿vale?', gloss: "And here, my number. If you need anything, call me, okay?" },
   { text: "Carmen's number was saved to your phone (📱 → Contacts)." },
-  { who: 'omni', text: "Nice. Keep numbers: in a fight, you can CALL a friend once for help. You can ask people for theirs while you chat, in Spanish. Not everyone will say yes, though." },
+  { who: 'omni', text: "Nice. Keep numbers: friends can help in a fight. You can ask people for theirs while you chat, in Spanish. Not everyone will say yes, though." },
+  { who: 'omni', text: "One problem: you can't call anyone yet. Your SIM is from back home, and roaming died with the network. You'll need a Spanish SIM. There's a phone stall in the market, MÓVILES." },
   { who: 'carmen', text: 'Pero ten cuidado... algo raro pasa en el puesto de fruta.', gloss: "But be careful... something strange is happening at the fruit stall." },
   { who: 'carmen', text: 'El duende del mercado... ya no es él.', gloss: "The market's duende... he's not himself anymore." },
   { who: 'omni', text: "A duende is a house spirit from Spanish folklore. ANTI must have corrupted him." },
@@ -96,6 +97,40 @@ export const ASK_NUMBER: Prompt = {
     ...ans('local', '¿me pasas tu móvil?', '¿me das tu móvil?', '¿me pasas tu whatsapp?'),
   ],
 };
+
+// ---------------------------------------------------------------------------
+// Life event: buying a SIM card (Imran's phone stall)
+
+export const SIM_PRICE = 20;
+
+export const SIM_ASK: Prompt = {
+  line: '¡Hola, buenas! ¿Qué necesitas?',
+  gloss: 'Hi there! What do you need?',
+  goal: 'Ask him for a SIM card for your phone.',
+  answers: [
+    faint('yo querer sim', 'quiero una tarjeta SIM', 'Conjugate the verb: "quiero".'),
+    faint('sim por favor', 'una tarjeta SIM, por favor', 'Spanish says "una tarjeta SIM" (a SIM card).'),
+    ...ans('clear', 'quiero una tarjeta sim', 'una tarjeta sim, por favor', 'quiero una sim', 'una sim, por favor', '¿tienes tarjetas sim?', 'necesito una tarjeta sim'),
+    ...ans('natural', '¿me das una tarjeta sim?', '¿me vendes una sim?', '¿tienes una sim de prepago?', 'necesito una sim para el móvil'),
+    ...ans('local', '¿me pones una sim de prepago?', '¿me pasas una sim de prepago?', 'me hace falta una sim para el móvil'),
+  ],
+};
+
+export const SIM_PRICE_LINES: Line[] = [
+  { who: 'npc', name: 'IMRAN', text: 'Claro. Una de prepago con llamadas y datos: son veinte.', gloss: 'Sure. A prepaid one with calls and data: that\'s twenty.' },
+];
+
+export const SIM_TOO_POOR: Line[] = [
+  { text: `You check your pockets. Not enough coins (a SIM costs ${SIM_PRICE}).` },
+  { who: 'npc', name: 'IMRAN', text: 'No pasa nada. Vuelve cuando puedas, aquí estoy.', gloss: "No worries. Come back when you can, I'm here." },
+  { who: 'omni', text: "We're short. Helping people and winning fights earns coins. We'll come back." },
+];
+
+export const SIM_BOUGHT: Line[] = [
+  { text: 'You hand over 20 coins. Imran swaps the SIM in your phone in two seconds flat.' },
+  { who: 'npc', name: 'IMRAN', text: '¡Listo! Ya tienes número español. ¡Bienvenido a Madrid!', gloss: "Done! Now you've got a Spanish number. Welcome to Madrid!" },
+  { who: 'omni', text: 'Now you can call your contacts. In a fight, CALL a friend once and they\'ll tell you what to say.' },
+];
 
 export const CARMEN_IDLE: Line[] = [
   { who: 'carmen', text: 'El puesto de fruta está allí arriba. ¡Ánimo!', gloss: "The fruit stall is up there. You've got this!" },

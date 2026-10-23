@@ -105,7 +105,12 @@ export class BattleScene extends Phaser.Scene {
       this.current ??= this.nextPrompt();
       const command = await ui.choose(`OMNI: ${this.current.goal ?? 'Answer him in Spanish.'}`, [
         { id: 'speak', label: 'SPEAK' },
-        { id: 'call', label: 'CALL', note: this.called ? 'used' : 'phone a friend', disabled: this.called || !state.contacts.some((c) => CHARACTERS[c]) },
+        {
+          id: 'call',
+          label: 'CALL',
+          note: !state.flags.sim ? 'needs a SIM' : this.called ? 'used' : 'phone a friend',
+          disabled: !state.flags.sim || this.called || !state.contacts.some((c) => CHARACTERS[c]),
+        },
         { id: 'item', label: 'ITEM', disabled: !Object.values(state.items).some((n) => n > 0) },
         { id: 'hint', label: 'HINT', note: `${HINT_COST} coins`, disabled: state.coins < HINT_COST },
       ], 2);

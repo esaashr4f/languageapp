@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { sfx } from '../audio';
 import {
   CARMEN_AFTER_ALL, CARMEN_AFTER_ORDER, CARMEN_GREETING, CARMEN_IDLE, CARMEN_MISS, CARMEN_ORDER, CARMEN_REWARD,
-  ASK_NUMBER, CARMEN_SERVED, CARMEN_SERVED_FAINT, CARMEN_SERVED_NATIVE, DUENDE_BATTLE, DUENDE_RESTORED_IDLE, NEED_WORDS, SLOT_EXAMPLES, SLOTS,
+  ASK_NUMBER, SIM_ASK, SIM_BOUGHT, SIM_PRICE, SIM_PRICE_LINES, SIM_TOO_POOR, CARMEN_SERVED, CARMEN_SERVED_FAINT, CARMEN_SERVED_NATIVE, DUENDE_BATTLE, DUENDE_RESTORED_IDLE, NEED_WORDS, SLOT_EXAMPLES, SLOTS,
 } from '../content/spain/act1';
 import {
   AFTER_BATTLE, ARRIVAL, ARRIVE_AT, BENCHES, DEAD_STALL, FOUNTAIN, GLITCH_ZONE, LAMPS, MAP_COLS, MAP_ROWS,
@@ -326,6 +326,8 @@ export class OverworldScene extends Phaser.Scene {
           await this.offerChat('duende', 'DUENDE');
         });
       }
+    } else if (npc.id === 'imran' && !state.flags.sim) {
+      void this.script(() => this.buySim());
     } else if (npc.def) {
       const talk = npc.def.talks[npc.talkIndex % npc.def.talks.length];
       npc.talkIndex++;
@@ -472,6 +474,50 @@ export class OverworldScene extends Phaser.Scene {
     state.flags.relayMercado = true;
     save();
     await ui.say(RELAY_RECLAIM.slice(1));
+  }
+
+  /** Life event: buying a Spanish SIM from Imran, in Spanish. Calls need it. */
+  private async buySim(): Promise<void> {
+    const examples = SLOT_EXAMPLES(state.name);
+    for (let attempt = 0; ; attempt++) {
+      const answer = await ui.ask({ who: 'npc', name: 'IMRAN', line: SIM_ASK.line, gloss: SIM_ASK.gloss, coach: SIM_ASK.goal });
+      const result = grade(SIM_ASK, answer ?? '', SLOTS);
+      if (!result.tier) {
+        sfx.miss();
+        await ui.say([
+          { who: 'npc', name: 'IMRAN', text: '¿Perdona? ¿Qué necesitas?', gloss: 'Sorry? What do you need?' },
+          { who: 'omni', text: attempt ? 'Try: "Quiero una tarjeta SIM, por favor."' : 'Ask for "una tarjeta SIM".' },
+        ]);
+        continue;
+      }
+      sfx.tier(tierRank(result.tier));
+      await ui.result({
+        tier: result.tier,
+        headline: `"${answer}"`,
+        detail: tierById(result.tier).blurb,
+        correction: result.matched?.fix ? { text: result.matched.fix, why: result.matched.why } : undefined,
+        better: result.better.map((a) => fillSlots(a.text, examples)),
+      });
+      learnPhrase(result.matched?.fix ?? answer ?? '', 'Asking for a SIM card', "Imran's stall");
+      break;
+    }
+    await ui.say(SIM_PRICE_LINES);
+    if (state.coins < SIM_PRICE) {
+      await ui.say(SIM_TOO_POOR);
+      return;
+    }
+    const buy = await ui.choose(`Buy the SIM for ${SIM_PRICE} coins? (You have ${state.coins}.)`, [
+      { id: 'yes', label: 'BUY IT' },
+      { id: 'no', label: 'NOT NOW' },
+    ]);
+    if (buy !== 'yes') return;
+    state.coins -= SIM_PRICE;
+    state.flags.sim = true;
+    addContact('imran');
+    save();
+    ui.updateHud();
+    sfx.confirm();
+    await ui.say(SIM_BOUGHT);
   }
 
   /** Ask for someone's number, in Spanish. Whether they give it depends on who they are. */

@@ -209,7 +209,7 @@ function renderApp(app: App, body: HTMLElement, refreshStatus: () => void): void
 
     case 'contacts': {
       if (!state.contacts.length) return void body.append(empty('Nobody yet. Meet people and their numbers will show up here.'));
-      body.append(el('p', 'muted small', 'In a battle, use CALL once to ask a contact for help.'));
+      body.append(el('p', 'muted small', state.flags.sim ? 'In a battle, use CALL once to ask a contact for help.' : 'No Spanish SIM yet, so no calls. Imran sells them at the MÓVILES stall.'));
       for (const id of state.contacts) {
         const c = CHARACTERS[id];
         if (!c) continue;
