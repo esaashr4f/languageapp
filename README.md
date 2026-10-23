@@ -66,6 +66,7 @@ The EN chip toggles English subtitles.
 
 ## Docs
 
+- `docs/game-so-far.md`: everything built so far, and the questions a story must answer
 - `docs/story-and-world.md`: lore, why legends attack, country stories, life events, ending
 - `docs/gamification.md`: casual vs story mode, battles, food, coins, progression, build order
 - `docs/setup.md`: deploying on Vercel and turning on log-in (Supabase + providers)
