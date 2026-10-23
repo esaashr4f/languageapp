@@ -76,6 +76,7 @@ export const MARKET_NPCS: MarketNpc[] = [
     talks: [
       [say('¡Buenos días! El pan sale del horno a las nueve.', 'Good morning! The bread comes out of the oven at nine.')],
       [say('Prueba una napolitana de chocolate. ¡Están calentitas!', "Try a chocolate napolitana. They're nice and warm!")],
+      [say('Todo ha subido: la harina, la luz... ¡y no quiero subir el precio del pan!', "Everything's gone up: flour, electricity... and I don't want to raise the price of bread!")],
     ],
   },
   {
@@ -83,6 +84,7 @@ export const MARKET_NPCS: MarketNpc[] = [
     talks: [
       [say('Las flores no necesitan traducción, ¿verdad?', "Flowers don't need translating, do they?")],
       [say('Hoy tengo claveles, rosas y girasoles.', 'Today I have carnations, roses and sunflowers.')],
+      [say('Cada verano hace más calor. Mis flores ya no aguantan.', 'Every summer is hotter. My flowers just can\'t take it anymore.')],
     ],
   },
   {
@@ -90,6 +92,7 @@ export const MARKET_NPCS: MarketNpc[] = [
     talks: [
       [say('¿Quieres probar un poco de manchego?', 'Want to try a little manchego?')],
       [say('Este jamón es ibérico de bellota. ¡Lo mejor de lo mejor!', 'This ham is acorn-fed Iberian. The best of the best!')],
+      [say('Los turistas compran mucho jamón, sí... pero el barrio ya no es para los vecinos.', "Tourists buy plenty of ham, sure... but the neighbourhood isn't for locals anymore.")],
     ],
   },
   {
@@ -97,6 +100,24 @@ export const MARKET_NPCS: MarketNpc[] = [
     talks: [
       [say('¡Churros recién hechos! Con chocolate, ¡claro!', 'Freshly made churros! With chocolate, of course!')],
       [say('Aquí los churros se mojan en el chocolate. Así se hace en Madrid.', "Here you dip churros in the chocolate. That's how it's done in Madrid.")],
+      [say('Con tantas normas de ruido, Madrid se está volviendo aburrido.', 'With all these noise rules, Madrid is getting boring.')],
+    ],
+  },
+  {
+    id: 'amina', sprite: 'amina', name: 'AMINA', x: 14, y: 9,
+    talks: [
+      [say('¡Bienvenido! Prueba el ras el hanout. Es de Marruecos, como yo.', "Welcome! Try the ras el hanout. It's from Morocco, like me.")],
+      [say('Llegué a Madrid hace quince años sin hablar nada de español. ¡Poco a poco!', 'I came to Madrid fifteen years ago without a word of Spanish. Little by little!')],
+      [say('Hay gente que dice que sobramos los inmigrantes... Pues este mercado no funcionaría sin nosotros.', "Some people say there are too many of us immigrants... Well, this market wouldn't run without us.")],
+    ],
+  },
+  {
+    id: 'fermin', sprite: 'fermin', name: 'FERMÍN', x: 24, y: 9,
+    talks: [
+      [say('¿Qué miras? Si no vas a comprar, ¡fuera!', "What are you looking at? If you're not buying, out!")],
+      [say('Mi alquiler se ha triplicado. ¡Todo el edificio son pisos turísticos!', 'My rent has tripled. The whole building is tourist flats!')],
+      [say('Y con las elecciones, todos prometen de todo. Luego, nada. Como siempre.', 'And with the elections, they all promise everything. Then nothing. As always.')],
+      [say('El barrio ha cambiado tanto que ya no reconozco a nadie.', "The neighbourhood has changed so much I don't recognise anyone anymore.")],
     ],
   },
   {
@@ -104,6 +125,7 @@ export const MARKET_NPCS: MarketNpc[] = [
     talks: [
       [say('En mis tiempos, nadie usaba esos aparatos para hablar.', 'In my day, nobody used those gadgets to talk.')],
       [say('Si quieres aprender español, habla con la gente. ¡Así se aprende!', "If you want to learn Spanish, talk to people. That's how you learn!")],
+      [say('¿Y las pensiones? A ver qué os queda a los jóvenes...', "And pensions? We'll see what's left for you young people...")],
     ],
   },
   {

@@ -63,6 +63,7 @@ The EN chip toggles English subtitles.
 - `docs/gamification.md`: casual vs story mode, battles, food, coins, progression, build order
 - `docs/setup.md`: deploying on Vercel and turning on log-in (Supabase + providers)
 - `docs/ai-integration.md`: how Claude grades answers, voices characters, and plan limits
+- `docs/monetisation.md`: proposal for energy (OMNI's signal), tiers and payments
 - `docs/characters.md`: every character's card (generated from `src/content/characters.ts`)
 - `docs/polyglot-game-design.md`: daily round, rarity tiers and grading
 - `research/krillion/`: teardown of Krillion (the inspiration) plus a style demo

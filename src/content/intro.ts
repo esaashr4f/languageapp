@@ -83,8 +83,9 @@ export const STORY: Vignette[] = [
     id: 'stories',
     caption: 'NOW',
     lines: [
-      { who: 'omni', text: "And it hasn't stopped. ANTI is rewriting each language, one by one. It starts with the stories." },
-      { who: 'omni', text: "The legends I stored, the spirits and heroes of every culture, are crawling out of the network... twisted. They don't remember who they are." },
+      { who: 'omni', text: "You need to know something about this world. Legends are real. Spirits, heroes, monsters... they live in the stories people tell about them." },
+      { who: 'omni', text: "For years, the only place those stories were still told was inside me. So when ANTI started rewriting the stories, it rewrote the legends themselves." },
+      { who: 'omni', text: "Now they're waking up twisted. Angry. They don't remember who they are. And ANTI's static leaks out wherever they are." },
     ],
   },
   {
@@ -94,6 +95,7 @@ export const STORY: Vignette[] = [
       { who: 'omni', text: 'When ANTI struck, I broke off one tiny piece of myself and hid it in the nearest device. Your phone.' },
       { who: 'omni', text: "I can't translate anymore. But I found out one thing ANTI doesn't want anybody to know." },
       { who: 'omni', text: "ANTI can delete data. It can't delete what a person knows." },
+      { who: 'omni', text: "It can't touch people, either. Nobody out there is corrupted. They're just cut off, like you." },
     ],
   },
 ];

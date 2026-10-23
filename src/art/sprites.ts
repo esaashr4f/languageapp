@@ -140,6 +140,8 @@ export const SPRITES: Record<string, SpriteDef> = {
   sergio: villager(VILLAGER_ROWS, { h: '#111111', t: '#2d2a4a', a: '#b5651d', p: '#111111', s: '#b07a52' }),
   marta: villager(VILLAGER_ROWS, { h: '#c92a2a', t: '#f59f00', a: '#fff3bf', p: '#5c3d2e' }),
   churrero: villager(HAT_ROWS, { c: '#c2255c', t: '#f1ecff', a: '#c2255c', p: '#2d2a4a', s: '#d9a07a' }),
+  amina: villager(VILLAGER_ROWS, { h: '#2b1a12', t: '#c2255c', a: '#ffd43b', p: '#3b2a20', s: '#c68e67' }),
+  fermin: villager(HAT_ROWS, { c: '#3b3560', t: '#6b4220', a: '#8a5a2b', p: '#2d2a4a', s: '#e0a98a' }),
   traveller: villager(VILLAGER_ROWS, { h: '#ffd43b', t: '#7048e8', a: '#b18cff', p: '#3b5bdb', s: '#f2c29b' }),
   cat: { rows: CAT_ROWS, palette: { o: OUTLINE, c: '#f59f00', e: '#2f9e44', p: '#ff6b9d' } },
   duende_true: {

@@ -4,6 +4,9 @@ export interface Answer {
   tier: TierId;
   /** Display form, with accents. May contain slots like {name} or {food}. */
   text: string;
+  /** For listed mistakes (faint): the corrected version and a short reason. */
+  fix?: string;
+  why?: string;
 }
 
 export interface Prompt {

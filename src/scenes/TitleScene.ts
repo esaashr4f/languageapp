@@ -7,7 +7,7 @@ import { ui, type Option } from '../ui/panel';
 
 /** Each letter of ZABAN in scripts that make the same sound. The first entry is the logo's resting form. */
 const LETTERS: { glyph: string; font: string }[][] = [
-  [g('Ζ', 'greek'), g('Z', 'latin'), g('З', 'cyrillic'), g('ز', 'arabic'), g('ザ', 'jp')],
+  [g('З', 'cyrillic'), g('Z', 'latin'), g('Ζ', 'greek'), g('ز', 'arabic'), g('ザ', 'jp')],
   [g('А', 'cyrillic'), g('A', 'latin'), g('Α', 'greek'), g('ا', 'arabic'), g('अ', 'hindi')],
   [g('ب', 'arabic'), g('B', 'latin'), g('Β', 'greek'), g('Б', 'cyrillic'), g('ब', 'hindi')],
   [g('ア', 'jp'), g('A', 'latin'), g('А', 'cyrillic'), g('Α', 'greek'), g('अ', 'hindi')],

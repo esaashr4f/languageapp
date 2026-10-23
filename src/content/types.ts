@@ -24,6 +24,8 @@ export interface BattlePhase {
   prompts: Prompt[];
   /** Damage on a miss; good answers reduce it, 0 means the legend has stopped attacking. */
   baseDamage: number;
+  /** How the legend reacts to a reply that gets through but with mistakes. */
+  faintReaction: Line;
   timerSec: number;
   attacks: Line[];
 }

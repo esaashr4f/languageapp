@@ -20,6 +20,12 @@ for (const c of Object.values(CHARACTERS)) {
   out.push(`- **Speaks:** ${c.language.speaks} (pitched at ${c.language.pitchAt})`);
   if (c.language.signaturePhrases.length) out.push(`- **Signature phrases:** ${c.language.signaturePhrases.map((p) => `"${p}"`).join(', ')}`);
   if (c.language.avoid.length) out.push(`- **Avoids:** ${c.language.avoid.join('; ')}`);
+  out.push(`- **Openness:** ${c.openness}`);
+  out.push(`- **When you make a mistake:** ${c.onMistakes}`);
+  if (c.opinions?.length) {
+    out.push('- **Opinions:**');
+    for (const o of c.opinions) out.push(`  - *${o.topic}:* ${o.view}`);
+  }
   out.push(`- **Wants:** ${c.wants}`);
   out.push(`- **Knows:** ${c.knows.join('; ')}`);
   out.push(`- **Doesn't know:** ${c.doesNotKnow.join('; ')}`);

@@ -66,23 +66,33 @@ Every human who really speaks a language is a living backup of it. That's why yo
 companion wants you to learn: each language you become fluent in is a language ANTI can
 never fully erase, and every bit of fluency weakens ANTI's grip on that country's network.
 
-## 3. Why the country's legends attack you
+## 3. The rules of ANTI and corruption
 
-ANTI corrupts each language starting with its stories, so the first thing to go wrong
-is the folklore stored in the network. Those stories come out into the world as
-**corrupted legends**: the spirits, creatures and heroes of that culture, rewritten by
-ANTI into something hostile. They're the culture's own memories, twisted.
+These are fixed rules; every script and AI prompt should follow them.
 
-- They're **not evil**. They've been made to forget who they are.
-- You don't kill them. You **speak them back to themselves**: answer them in their own
-  language well enough and the corruption breaks.
-- A restored legend **joins you**. It becomes a spell/summon in your spellbook (the
-  windmill giant of La Mancha fights *for* you after you restore it). This is your
-  collection: every culture's legends, restored by you.
+1. **Legends are real, and they are made of stories.** Spirits, heroes and monsters exist
+   in this world because people tell stories about them, in their language. A legend is
+   only as strong, and only as *itself*, as the stories told about it.
+2. **For ten years, OMNI was where the stories lived.** People stopped telling them to each
+   other; they asked OMNI. So every culture's legends became tied to OMNI's network.
+3. **ANTI only acts on the network.** It can scramble or delete digital text (signs,
+   apps, translations) and rewrite the stories stored in OMNI. Rewriting a legend's
+   stories corrupts the legend: it wakes up twisted, hostile, not knowing who it is.
+4. **ANTI cannot corrupt people.** Nobody in the world is corrupted. People are only cut
+   off: no English, no translation. Everyone you meet is a normal person with their own
+   opinions and moods.
+5. **ANTI cannot delete what a person knows.** Languages in people's heads are safe.
+6. **Glitch zones** are where a corrupted legend's static leaks into the world: lights
+   flicker, screens scramble, signs go blank. That's how you find legends.
+7. **Speaking restores.** Talking to a legend in its own language is telling its story
+   again, with living words, which overwrites ANTI's version. The better you speak, the
+   more of the story you restore. That's why bosses are beaten by conversation, and why
+   the Heart Legend needs a whole, real conversation.
+8. **Restored legends stay restored** and join you, because now their story lives in you
+   too.
 
-The stronger the legend, the deeper ANTI's corruption and the better your language has to
-be. Minor creatures (a duende in Spain, a kappa in Japan) need a phrase; a country's
-greatest legend needs a full conversation.
+Open mysteries (for later acts): where ANTI came from, and why OMNI's records about the
+player are corrupted.
 
 ## 4. Each country's final boss = conversational fluency
 

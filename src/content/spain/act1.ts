@@ -3,6 +3,8 @@ import type { TierId } from '../../engine/tiers';
 import type { LegendBattle, Line } from '../types';
 
 const ans = (tier: TierId, ...texts: string[]): Answer[] => texts.map((text) => ({ tier, text }));
+/** A common learner mistake: rates Faint, and shows the fix and why. */
+const faint = (text: string, fix: string, why: string): Answer => ({ tier: 'faint', text, fix, why });
 
 // Slot patterns are written against normalised text (lowercase, no accents: ñ -> n).
 const ARTICLE = '(?:(?:un|una|unos|unas|el|la|los|las) )?';
@@ -40,7 +42,8 @@ export const CARMEN_ORDER: Prompt = {
   gloss: 'Hi, love! What can I get you?',
   goal: "She's asking what you'd like. Order something from her stall, like a coffee or some churros.",
   answers: [
-    ...ans('faint', 'yo querer {item}', 'quiero {item} please'),
+    faint('yo querer {item}', 'quiero {item}', 'Conjugate the verb: "yo quiero", not "yo querer".'),
+    faint('quiero {item} please', 'quiero {item}, por favor', 'Nobody here understands English anymore: "por favor".'),
     ...ans('clear', '{item}', 'quiero {item}', '{item}, por favor', 'quiero {item}, por favor', 'quisiera {item}', 'quisiera {item}, por favor'),
     ...ans('natural', 'ponme {item}', '¿me das {item}?', '¿me das {item}, por favor?', '¿me pones {item}?', '¿me pones {item}, por favor?', 'póngame {item}, por favor', '¿me pone {item}?'),
     ...ans('local', 'ponme {item}, porfa', '¿me pones {item}, porfa?', '¿me pones {item} cuando puedas?'),
@@ -58,6 +61,10 @@ export const CARMEN_MISS: Line[] = [
 
 export const CARMEN_SERVED_NATIVE: Line[] = [
   { who: 'carmen', text: '¡Uy, qué bien hablas! ¡Pareces de aquí!', gloss: 'Ooh, you speak so well! You sound like a local!' },
+];
+
+export const CARMEN_SERVED_FAINT: Line[] = [
+  { who: 'carmen', text: '¿Cómo? Ah, ¡que quieres decir...! Jaja, no pasa nada, cariño. ¡Marchando!', gloss: "What? Oh, you mean...! Haha, no problem, love. Coming right up!" },
 ];
 
 export const CARMEN_SERVED: Line[] = [
@@ -113,6 +120,7 @@ export const DUENDE_BATTLE: LegendBattle = {
       from: 100,
       enter: [],
       baseDamage: 6,
+      faintReaction: { who: 'corrupt', text: '¿¡QUÉ!? ¡NI SIQUIERA SABES HABLAR!', gloss: "WHAT!? YOU CAN'T EVEN TALK PROPERLY!" },
       timerSec: 25,
       attacks: [
         { who: 'corrupt', text: '¡SILENCIO!', gloss: 'SILENCE!' },
@@ -125,7 +133,8 @@ export const DUENDE_BATTLE: LegendBattle = {
           gloss: 'WHO ARE YOU?!',
           goal: "He's scared of strangers. Tell him who you are, and that you mean no harm.",
           answers: [
-            ...ans('faint', 'yo llamo {name}', 'mi llamo {name}'),
+            faint('yo llamo {name}', 'me llamo {name}', 'Llamarse is reflexive: "me llamo" (literally "I call myself").'),
+            faint('mi llamo {name}', 'me llamo {name}', '"Me", not "mi": "mi" means "my".'),
             ...ans('clear', 'me llamo {name}', 'mi nombre es {name}', 'yo soy {name}', 'yo me llamo {name}'),
             ...ans('natural', 'soy {name}', 'soy {name} y vengo en paz', 'tranquilo, soy {name}', 'soy {name}, tranquilo'),
             ...ans('local', 'tranqui, soy {name}', 'soy {name}, tranqui'),
@@ -136,7 +145,8 @@ export const DUENDE_BATTLE: LegendBattle = {
           gloss: 'GET OUT OF MY MARKET!',
           goal: 'He wants you gone. Apologise, or calm him down.',
           answers: [
-            ...ans('faint', 'yo siento', 'lo sentir'),
+            faint('yo siento', 'lo siento', 'The fixed phrase is "lo siento" (literally "I feel it").'),
+            faint('lo sentir', 'lo siento', 'Conjugate the verb: "siento".'),
             ...ans('clear', 'lo siento', 'perdón', 'lo siento mucho', 'disculpe', 'perdone'),
             ...ans('natural', 'vale, vale', 'tranquilo', 'perdona', 'tranquilo, no pasa nada', 'perdona, no quiero molestar', 'no te enfades', 'no te pongas así'),
             ...ans('local', 'no te rayes', 'tranqui, tronco', 'vale, vale, tranqui'),
@@ -147,7 +157,9 @@ export const DUENDE_BATTLE: LegendBattle = {
           gloss: 'WHAT DO YOU WANT FROM ME?!',
           goal: "He's suspicious. Tell him you're here to help him.",
           answers: [
-            ...ans('faint', 'ayuda', 'yo querer ayudar', 'quiero ayudar tú'),
+            faint('ayuda', 'quiero ayudarte', '"¡Ayuda!" on its own means "Help!". Say what you want to do.'),
+            faint('yo querer ayudar', 'quiero ayudar', 'Conjugate the verb: "quiero".'),
+            faint('quiero ayudar tú', 'quiero ayudarte', 'The "you" attaches to the verb: "ayudarte".'),
             ...ans('clear', 'quiero ayudar', 'quiero ayudarte', 'quiero ayudarle'),
             ...ans('natural', 'solo quiero ayudarte', 'vengo a ayudarte', 'solo quiero hablar contigo', 'he venido a ayudarte'),
             ...ans('local', 'te echo una mano', 'vengo a echarte una mano', 'quiero echarte una mano'),
@@ -166,6 +178,7 @@ export const DUENDE_BATTLE: LegendBattle = {
         { who: 'omni', text: "It's working! Step two: he's lost his memory. Answer his questions and help him remember who he is." },
       ],
       baseDamage: 4,
+      faintReaction: { who: 'duende', text: '¿Eh...? Hablas... raro. Pero... te entiendo.', gloss: 'Huh...? You talk... funny. But... I understand you.' },
       timerSec: 25,
       attacks: [
         { who: 'corrupt', text: '¡A-ANTI... DICE QUE MIENTES!', gloss: 'A-ANTI... SAYS YOU ARE LYING!' },
@@ -177,8 +190,9 @@ export const DUENDE_BATTLE: LegendBattle = {
           gloss: 'You... speak... Spanish?',
           goal: "He's starting to hear you! Tell him whether you speak Spanish.",
           answers: [
-            ...ans('faint', 'si, yo hablo poco', 'yo hablar español'),
-            ...ans('clear', 'sí', 'sí, hablo español', 'sí, hablo un poco', 'sí, hablo un poco de español', 'un poco'),
+            faint('si, yo hablo poco', 'sí, hablo un poco', '"Un poco" means "a little"; "poco" alone sounds like "hardly at all".'),
+            faint('yo hablar español', 'hablo español', 'Conjugate the verb: "hablo".'),
+            ...ans('clear', 'sí', 'sí, hablo español', 'hablo español', 'hablo un poco', 'sí, hablo un poco', 'sí, hablo un poco de español', 'un poco'),
             ...ans('natural', 'sí, un poquito', 'estoy aprendiendo', 'estoy aprendiendo español', 'estoy aprendiendo, poco a poco'),
             ...ans('local', 'me defiendo', 'me defiendo un poco'),
           ],
@@ -188,7 +202,8 @@ export const DUENDE_BATTLE: LegendBattle = {
           gloss: "I don't... remember... who am I?",
           goal: "He's forgotten who he is. Remind him: he's the market's duende.",
           answers: [
-            ...ans('faint', 'tú es un duende', 'eres duende'),
+            faint('tú es un duende', 'tú eres un duende', 'With tú, "ser" becomes "eres".'),
+            faint('eres duende', 'eres un duende', 'Add the article: "un duende".'),
             ...ans('clear', 'eres un duende', 'duende', 'tú eres un duende', 'eres el duende'),
             ...ans('natural', 'eres el duende del mercado', 'eres el duende de este mercado', 'eres el duende del puesto de fruta', 'eres el duende de la frutería'),
             ...ans('local', 'eres el duende de toda la vida'),
@@ -199,7 +214,8 @@ export const DUENDE_BATTLE: LegendBattle = {
           gloss: 'My head... where am I?',
           goal: "He's confused. Tell him where he is.",
           answers: [
-            ...ans('faint', 'tu esta en el mercado', 'tú estás en mercado'),
+            faint('tu esta en el mercado', 'estás en el mercado', 'With tú, "estar" becomes "estás".'),
+            faint('tú estás en mercado', 'estás en el mercado', 'Spanish needs the article here: "en el mercado".'),
             ...ans('clear', 'en madrid', 'en el mercado', 'estás en el mercado', 'estás en madrid'),
             ...ans('natural', 'estás en el mercado de madrid', 'estás en casa', 'estás en tu mercado', 'estás en casa, en tu mercado'),
             ...ans('local', 'estás en tu casa'),
@@ -218,6 +234,7 @@ export const DUENDE_BATTLE: LegendBattle = {
         { who: 'omni', text: "Last step. He's not fighting anymore. Just chat with him like a friend." },
       ],
       baseDamage: 0,
+      faintReaction: { who: 'duende', text: '¡Jeje! Casi, casi. Se dice así, ¿eh?', gloss: 'Hehe! Almost. You say it like this, see?' },
       timerSec: 35,
       attacks: [],
       prompts: [
@@ -226,7 +243,7 @@ export const DUENDE_BATTLE: LegendBattle = {
           gloss: "Thank you... what's your name, friend?",
           goal: "He's back! He's asking your name. Introduce yourself, nicely this time.",
           answers: [
-            ...ans('faint', 'yo llamo {name}'),
+            faint('yo llamo {name}', 'me llamo {name}', 'Llamarse is reflexive: "me llamo".'),
             ...ans('clear', 'me llamo {name}', 'mi nombre es {name}'),
             ...ans('natural', 'soy {name}', 'me llamo {name}, encantado', 'me llamo {name}, encantada', 'soy {name}, encantado', 'soy {name}, encantada', 'soy {name}, un placer'),
             ...ans('local', 'soy {name}, encantado de la vida', 'soy {name}, encantada de la vida'),
@@ -237,8 +254,9 @@ export const DUENDE_BATTLE: LegendBattle = {
           gloss: 'And what do you think of Madrid?',
           goal: 'Small talk! Tell him what you think of Madrid.',
           answers: [
-            ...ans('faint', 'yo gusta madrid', 'me gusto'),
-            ...ans('clear', 'bien', 'me gusta', 'bonito', 'me gusta mucho', 'es muy bonito', 'es muy bonita'),
+            faint('yo gusta madrid', 'me gusta Madrid', 'Gustar works backwards: "me gusta" means "it pleases me".'),
+            faint('me gusto', 'me gusta', '"Me gusto" means "I like myself"!'),
+            ...ans('clear', 'bien', 'me gusta', 'me gusta madrid', 'bonito', 'me gusta mucho', 'me gusta mucho madrid', 'es muy bonito', 'es muy bonita'),
             ...ans('natural', 'me encanta', 'es genial', 'está genial', 'es precioso'),
             ...ans('local', 'es una pasada', 'me encanta, es una pasada', 'me flipa', 'mola mucho', 'mola un montón'),
           ],
@@ -248,7 +266,7 @@ export const DUENDE_BATTLE: LegendBattle = {
           gloss: 'What do you like to eat here?',
           goal: 'He wants to know your favourite food here.',
           answers: [
-            ...ans('faint', 'yo gusta {food}'),
+            faint('yo gusta {food}', 'me gusta {food}', 'Gustar works backwards: "me gusta".'),
             ...ans('clear', '{food}', 'me gusta {food}', 'me gusta comer {food}'),
             ...ans('natural', 'me encanta {food}', 'me encantan {food}', 'lo que más me gusta es {food}'),
             ...ans('local', 'me vuelve loco {food}', 'me vuelven locos {food}', 'me pirra {food}', 'me pirran {food}'),

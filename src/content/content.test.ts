@@ -25,6 +25,17 @@ describe('Spain Act 1 content', () => {
     });
   }
 
+  it('every listed mistake comes with a fix that is itself correct', () => {
+    for (const prompt of prompts) {
+      for (const answer of prompt.answers.filter((a) => a.tier === 'faint')) {
+        expect(answer.fix, answer.text).toBeTruthy();
+        expect(answer.why, answer.text).toBeTruthy();
+        const fixed = grade(prompt, fillSlots(answer.fix!, examples), SLOTS);
+        expect(tierRank(fixed.tier ?? 'faint'), answer.fix).toBeGreaterThanOrEqual(tierRank('clear'));
+      }
+    }
+  });
+
   it('phases are ordered by corruption threshold', () => {
     const froms = DUENDE_BATTLE.phases.map((p) => p.from);
     expect(froms).toEqual([...froms].sort((a, b) => b - a));

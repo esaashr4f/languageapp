@@ -137,6 +137,9 @@ export class BattleScene extends Phaser.Scene {
     const result = grade(prompt, answer ?? '', SLOTS);
     let better = result.better.map((a) => fillSlots(a.text, examples));
     let detail = '';
+    let correction: { text: string; why?: string } | undefined = result.matched?.fix
+      ? { text: fillSlots(result.matched.fix, examples), why: result.matched.why }
+      : undefined;
 
     // Not on the answer list? Ask the AI rater before calling it a miss.
     if (!result.tier && answer) {
@@ -147,7 +150,8 @@ export class BattleScene extends Phaser.Scene {
       });
       if (ai) {
         result.tier = ai.rating.level === 'NO_SIGNAL' ? null : (ai.rating.level.toLowerCase() as TierId);
-        better = [ai.rating.correction, ai.rating.better].filter((b): b is string => !!b);
+        better = ai.rating.better ? [ai.rating.better] : [];
+        correction = ai.rating.correction ? { text: ai.rating.correction } : undefined;
         detail = ai.rating.feedback;
       }
     }
@@ -160,6 +164,7 @@ export class BattleScene extends Phaser.Scene {
         tier: null,
         headline: answer === null ? 'Too slow! ANTI scrambled the moment.' : `"${answer}" didn't get through the static.`,
         detail: detail || undefined,
+        correction,
         better,
       });
       await this.enemyAttack(this.phase.baseDamage + 2);
@@ -175,9 +180,11 @@ export class BattleScene extends Phaser.Scene {
       tier: result.tier,
       headline: `"${answer}"`,
       detail: `${detail || tier.blurb} · Corruption −${tier.clear}%`,
+      correction,
       better,
     });
     ui.updateHud();
+    if (result.tier === 'faint') await ui.say([this.phase.faintReaction]);
 
     if (this.corruption <= 0) return this.victory();
     await this.checkPhase();

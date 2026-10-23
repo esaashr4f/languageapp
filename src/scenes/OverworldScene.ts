@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { sfx } from '../audio';
 import {
   CARMEN_AFTER_ALL, CARMEN_AFTER_ORDER, CARMEN_GREETING, CARMEN_IDLE, CARMEN_MISS, CARMEN_ORDER, CARMEN_REWARD,
-  CARMEN_SERVED, CARMEN_SERVED_NATIVE, DUENDE_BATTLE, DUENDE_RESTORED_IDLE, NEED_WORDS, SLOT_EXAMPLES, SLOTS,
+  CARMEN_SERVED, CARMEN_SERVED_FAINT, CARMEN_SERVED_NATIVE, DUENDE_BATTLE, DUENDE_RESTORED_IDLE, NEED_WORDS, SLOT_EXAMPLES, SLOTS,
 } from '../content/spain/act1';
 import {
   AFTER_BATTLE, ARRIVAL, ARRIVE_AT, BENCHES, DEAD_STALL, FOUNTAIN, GLITCH_ZONE, LAMPS, MAP_COLS, MAP_ROWS,
@@ -367,8 +367,9 @@ export class OverworldScene extends Phaser.Scene {
   }
 
   private async converse(npcId: string, name: string): Promise<void> {
-    let line = '¿Qué tal? ¿De qué quieres hablar?';
-    let gloss = 'How are you? What do you want to talk about?';
+    const opener = CHARACTERS[npcId].chatOpener ?? { text: '¿Qué tal? ¿De qué quieres hablar?', gloss: 'How are you? What do you want to talk about?' };
+    let line = opener.text;
+    let gloss = opener.gloss;
     let note: string | null = 'Chat about anything you like. Tap IDEAS if you get stuck, BYE to leave.';
     let ideas = CHARACTERS[npcId].knows.slice(0, 3).map((k) => `Ask about ${k.toLowerCase()}`);
     const history: ChatRequest['history'] = [{ speaker: 'npc', text: line }];
@@ -456,9 +457,16 @@ export class OverworldScene extends Phaser.Scene {
         tier: result.tier,
         headline: `"${answer}"`,
         detail: `${tierById(result.tier).blurb}. Your first order in Spanish!`,
+        correction: result.matched?.fix ? { text: fillSlots(result.matched.fix, examples), why: result.matched.why } : undefined,
         better: result.better.map((a) => fillSlots(a.text, examples)),
       });
-      await ui.say(tierRank(result.tier) >= tierRank('natural') ? CARMEN_SERVED_NATIVE : CARMEN_SERVED);
+      await ui.say(
+        result.tier === 'faint'
+          ? CARMEN_SERVED_FAINT
+          : tierRank(result.tier) >= tierRank('natural')
+            ? CARMEN_SERVED_NATIVE
+            : CARMEN_SERVED,
+      );
       break;
     }
     await ui.say(CARMEN_AFTER_ORDER);

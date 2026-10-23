@@ -52,6 +52,8 @@ export interface ResultView {
   tier: TierId | null;
   headline: string;
   detail?: string;
+  /** The fixed version of a reply with mistakes, and why. */
+  correction?: { text: string; why?: string };
   better: string[];
 }
 
@@ -309,11 +311,7 @@ class Panel {
         box.classList.add('asking');
         box.append(el('p', 'text', opts.line));
         if (opts.gloss && this.showGloss) box.append(el('p', 'gloss', opts.gloss));
-        if (opts.coach) {
-          const coach = el('p', 'coach');
-          coach.append(el('b', '', 'OMNI'), document.createTextNode(` ${opts.coach}`));
-          box.append(coach);
-        }
+        if (opts.coach) this.body.append(this.omniTip(opts.coach));
 
         let timeout = 0;
         if (opts.timerSec) {
@@ -387,11 +385,6 @@ class Panel {
         box.classList.add('asking');
         box.append(el('p', 'text', opts.line));
         if (opts.gloss && this.showGloss) box.append(el('p', 'gloss', opts.gloss));
-        if (opts.note) {
-          const note = el('p', 'coach');
-          note.append(el('b', '', 'OMNI'), document.createTextNode(` ${opts.note}`));
-          box.append(note);
-        }
         const form = el('form', 'answer');
         const input = el('input');
         Object.assign(input, { type: 'text', autocomplete: 'off', spellcheck: false, lang: 'es', placeholder: 'Di algo… (say something)', maxLength: 400 });
@@ -423,7 +416,8 @@ class Panel {
           actions.append(b);
         }
         if (opts.meter) actions.append(el('span', 'meter', opts.meter));
-        box.append(actions);
+        if (opts.note) this.body.append(this.omniTip(opts.note));
+        this.body.append(actions);
 
         const done = (value: { text: string } | { action: string }) => {
           form.onsubmit = null;
@@ -440,6 +434,13 @@ class Panel {
     } finally {
       this.end();
     }
+  }
+
+  /** OMNI's advice, shown under the main box so the box itself stays uncluttered. */
+  private omniTip(text: string): HTMLElement {
+    const tip = el('p', 'coach');
+    tip.append(el('b', '', 'OMNI'), document.createTextNode(` ${text}`));
+    return tip;
   }
 
   /** A "they're thinking" box while waiting on the server. */
@@ -460,6 +461,12 @@ class Panel {
         stamp.style.setProperty('--tc', tier ? tier.color : '#ff5252');
         box.append(stamp, el('p', 'text', view.headline));
         if (view.detail) box.append(el('p', 'gloss', view.detail));
+        if (view.correction) {
+          const fix = el('p', 'fix');
+          fix.append(el('b', '', 'Correction'), document.createTextNode(` ${view.correction.text}`));
+          if (view.correction.why) fix.append(el('small', '', view.correction.why));
+          box.append(fix);
+        }
         if (view.better.length) {
           box.append(el('p', 'label', !tier ? 'You could say:' : view.tier === 'faint' ? 'Try it like this:' : 'Even more natural:'));
           const list = el('ul', 'better');
