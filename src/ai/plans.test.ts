@@ -1,43 +1,35 @@
 import { describe, expect, it } from 'vitest';
-import { consume, PLANS, type Usage } from './plans';
+import { consume, freshUsage, nextBarAt, PLANS, refill, type Usage } from './plans';
 
 const at = (iso: string) => new Date(iso);
 
-describe('conversation allowance', () => {
-  it('lets free players use their daily replies, then stops them', () => {
-    let usage: Usage = { plan: 'free', periodStart: '2026-10-22T00:00:00.000Z', used: 0, credits: 0 };
-    for (let i = 0; i < PLANS.free.replies; i++) {
-      const r = consume(usage, at('2026-10-22T15:00:00Z'));
+describe('signal', () => {
+  it('starts full and runs out after the capacity is spent', () => {
+    let usage = freshUsage('free', at('2026-10-22T10:00:00Z'));
+    for (let i = 0; i < PLANS.free.capacity; i++) {
+      const r = consume(usage, at('2026-10-22T10:00:00Z'));
       expect(r.allowed).toBe(true);
       usage = r.usage;
     }
-    const blocked = consume(usage, at('2026-10-22T16:00:00Z'));
-    expect(blocked).toMatchObject({ allowed: false, reason: 'free_limit', remaining: 0 });
-    expect(blocked.resetsAt).toBe('2026-10-23T00:00:00.000Z');
+    expect(consume(usage, at('2026-10-22T10:00:00Z'))).toMatchObject({ allowed: false, reason: 'no_signal' });
   });
 
-  it('refills free replies the next day', () => {
-    const usage: Usage = { plan: 'free', periodStart: '2026-10-22T00:00:00.000Z', used: 30, credits: 0 };
-    const r = consume(usage, at('2026-10-23T08:00:00Z'));
-    expect(r.allowed).toBe(true);
-    expect(r.usage.used).toBe(1);
-    expect(r.usage.periodStart).toBe('2026-10-23T00:00:00.000Z');
+  it('refills steadily: a free bar every 48 minutes', () => {
+    const empty: Usage = { plan: 'free', signal: 0, at: '2026-10-22T10:00:00.000Z', credits: 0 };
+    expect(nextBarAt(empty)).toBe('2026-10-22T10:48:00.000Z');
+    expect(consume(empty, at('2026-10-22T10:47:00Z')).allowed).toBe(false);
+    expect(consume(empty, at('2026-10-22T10:48:00Z')).allowed).toBe(true);
   });
 
-  it('spends purchased credits after a paid plan runs out, then waits for renewal', () => {
-    const usage: Usage = { plan: 'plus', periodStart: '2026-10-05T10:00:00.000Z', used: 1500, credits: 1 };
-    const withCredit = consume(usage, at('2026-10-20T10:00:00Z'));
-    expect(withCredit).toMatchObject({ allowed: true, remaining: 0 });
-    expect(withCredit.usage.credits).toBe(0);
-    const blocked = consume(withCredit.usage, at('2026-10-21T10:00:00Z'));
-    expect(blocked).toMatchObject({ allowed: false, reason: 'plan_limit' });
-    expect(blocked.resetsAt).toBe('2026-11-05T10:00:00.000Z');
+  it('never refills past capacity', () => {
+    const usage: Usage = { plan: 'basic', signal: 99, at: '2026-10-01T00:00:00.000Z', credits: 0 };
+    expect(refill(usage, at('2026-10-22T00:00:00Z')).signal).toBe(PLANS.basic.capacity);
   });
 
-  it('renews a paid plan monthly from its start date', () => {
-    const usage: Usage = { plan: 'plus', periodStart: '2026-08-05T10:00:00.000Z', used: 1500, credits: 0 };
-    const r = consume(usage, at('2026-10-06T00:00:00Z'));
-    expect(r.allowed).toBe(true);
-    expect(r.usage.periodStart).toBe('2026-10-05T10:00:00.000Z');
+  it('spends battery packs once the signal is empty', () => {
+    const usage: Usage = { plan: 'premium', signal: 0.2, at: '2026-10-22T10:00:00.000Z', credits: 2 };
+    const r = consume(usage, at('2026-10-22T10:00:00Z'));
+    expect(r).toMatchObject({ allowed: true });
+    expect(r.usage.credits).toBe(1);
   });
 });

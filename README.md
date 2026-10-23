@@ -25,6 +25,12 @@ Duels) and a story mode share one profile.
   per plan (Claude via `/api`, demo replies without a key).
 - **Smarter battles:** OMNI coaches every line with a goal; replies not on the answer list
   are rated by Claude with a shared rubric (Faint / Clear / Natural / Local).
+- **The phone (📱 or P):** OMNI's home screen with Signal, past Chats, a Phrasebook of
+  everything you've learnt, Contacts (ask people for their number in Spanish; not everyone
+  says yes), Legends, Bag and a map of Madrid that grows as OMNI reclaims relays. CALL a
+  contact once per battle for help.
+- **Signal energy:** conversations cost one bar each and refill over time (Free / Basic /
+  Premium). Story and battles are always free.
 - **Accounts:** sign in with Google, Apple, Facebook or Discord (Supabase) to save progress
   to the cloud; guests save on the device. See `docs/setup.md`.
 

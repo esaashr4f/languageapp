@@ -11,6 +11,8 @@ export const AFTER_BATTLE = { x: 19, y: 6 };
 export const GLITCH_ZONE = { x: 17, y: 1, w: 6, h: 4 };
 export const DEAD_STALL = { x: 19, y: 3, w: 2 };
 export const FOUNTAIN = { x: 19, y: 13 };
+/** The OMNI relay ANTI holds through the duende. */
+export const RELAY = { x: 21, y: 5 };
 
 export interface Stall {
   type: string;
@@ -163,6 +165,29 @@ export const ARRIVAL: Line[] = [
   { text: 'Madrid. The bus from the airport drops you outside the Mercado de la Luz.' },
   { text: 'The market is busy. People shout prices, laugh, argue about football. All of it in Spanish.' },
   { who: 'omni', text: "Listen to them. Real Spanish, all around you. This is where you'll learn." },
-  { who: 'omni', text: "Up north, by the fruit stall, I'm picking up ANTI's static. But we're not ready for that yet." },
-  { who: 'omni', text: "First, let's talk to people. See the woman at the fruit stall with the oranges? Say hello to her." },
+  { who: 'omni', text: "See the lamppost up north, by the fruit stall, with the red light? That's one of my relays. ANTI has it." },
+  { who: 'omni', text: "It's holding it through a legend. Wherever ANTI binds a legend to a relay, its static leaks out. That's the glitch you can see." },
+  { who: 'omni', text: "We're not ready for that yet. First, let's talk to people. See the woman at the fruit stall? Say hello to her." },
+];
+
+export const RELAY_HELD: Line[] = [
+  { who: 'omni', text: "That's my relay. ANTI's holding it through the duende: his power is jamming it, so nobody can reset it." },
+  { who: 'omni', text: "We can't touch it until he's free. Talk him back to who he is, and he'll let go." },
+];
+
+export const RELAY_PROMPT: Line[] = [
+  { who: 'omni', text: "Look, the relay! The red light's gone dim. The duende's not holding it for ANTI anymore." },
+  { who: 'omni', text: 'Quick, walk me over to it and hold me up. I can take it back.' },
+];
+
+export const RELAY_RECLAIM: Line[] = [
+  { text: 'You hold the phone up to the relay. Static crackles... then the light turns blue.' },
+  { text: 'OMNI reclaimed the market relay!' },
+  { who: 'omni', text: "I can see again! The streets around the market: Plaza Mayor, Puerta del Sol, La Latina..." },
+  { who: 'omni', text: "ANTI's static is all over them. Every patch of it is another legend it's using as an anchor. Check the map on your phone (📱)." },
+  { who: 'omni', text: "That's how we win this. One legend, one relay, one street at a time. Now let's go tell Carmen." },
+];
+
+export const RELAY_MINE: Line[] = [
+  { who: 'omni', text: 'This relay is mine again. ANTI can\'t come back here: the duende is anchored in you now, not in the network.' },
 ];

@@ -147,6 +147,19 @@ export function makeTiles(scene: Phaser.Scene): void {
     rect(ctx, 13, 0, 6, 3, '#a5d8ff');
   });
 
+  // An OMNI relay on a lamppost: red while ANTI holds it, cyan once OMNI has it back.
+  for (const [key, light] of [['t_relay_anti', '#ff5252'], ['t_relay_omni', '#59c8ff']] as const) {
+    canvasTexture(scene, key, 16, 16, (ctx) => {
+      drawFloor(ctx, 17);
+      rect(ctx, 7, 4, 2, 12, '#2d2a4a');
+      rect(ctx, 4, 2, 8, 4, '#3b3560');
+      rect(ctx, 5, 3, 6, 2, light);
+      rect(ctx, 3, 0, 1, 3, light);
+      rect(ctx, 12, 0, 1, 3, light);
+      rect(ctx, 5, 14, 6, 2, '#2d2a4a');
+    });
+  }
+
   canvasTexture(scene, 't_bench', 16, 16, (ctx) => {
     drawFloor(ctx, 11);
     rect(ctx, 1, 6, 14, 3, '#8a5a2b');

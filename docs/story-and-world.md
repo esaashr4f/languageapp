@@ -79,26 +79,47 @@ These are fixed rules; every script and AI prompt should follow them. Each one a
 5. **ANTI cannot corrupt people, or delete what they know.** Nobody you meet is corrupted;
    people are only cut off (no English, no translation). Languages in people's heads are safe.
 
-### Why do we have to turn legends back to reach ANTI?
-6. **Corrupted legends are ANTI's anchors.** ANTI has no single body; it is spread across
-   the network. It holds each country through that country's corrupted legends and feeds
-   on their power (that's why their static bleeds into the world as glitch zones).
-7. **Each restored legend is an anchor ANTI loses.** The Heart Legend is the root of a
-   country's network: restore it and ANTI's grip on that country breaks, and the borders
-   and networks open again.
-8. **When enough countries are free, ANTI has nowhere left to hide,** and its core becomes
-   reachable: the final act.
+### Why do we have to turn legends back to reach ANTI? (the physical layer)
+6. **OMNI has a body: relays.** Millions of small relays on lampposts, shop signs and
+   stations: the hardware that showed translations everywhere. Every country's relays run
+   up to one central hub.
+7. **ANTI is software and can't move.** In the first days, engineers started resetting
+   relays by hand. So ANTI **bound a corrupted legend to each cluster of relays**: the
+   legend's power jams the hardware, and its static (glitch zones) scrambles the words of
+   anyone who comes close. Corrupted legends are ANTI's anchors in the physical world,
+   and ANTI feeds on their power.
+8. **Freeing a legend frees its relays.** Once a legend is anchored in a person instead of
+   the network, it lets go. You hold your phone up to the freed relay and OMNI reclaims
+   it: OMNI gets stronger, sees the streets around it (your map grows), and ANTI loses
+   ground.
+9. **The Heart Legend guards the country's hub.** Free it and OMNI retakes the hub:
+   ANTI's grip on the country breaks, and the airports, trains and borders it locked reopen.
+10. **When enough hubs are free, ANTI has nowhere left to hide,** and its core becomes
+    reachable: the final act.
 
 ### Why does speaking work?
-9. **You can't punch a story; you can only tell it again.** Talking to a legend in its own
+11. **You can't punch a story; you can only tell it again.** Talking to a legend in its own
    language is retelling its story with living words, which overwrites ANTI's version. The
    better you speak, the more of the story you restore. A Heart Legend carries a whole
    culture's story, so restoring it takes a real conversation (independent speaker, B2).
-10. **Restored legends stay restored and join you,** because their story now lives in
-    someone's head again: yours, where ANTI can't reach.
-11. **Why their attacks hurt:** corrupted legends attack with ANTI's static, which scrambles
-    your words. (Idea: rename HP to **VOICE**: at zero you lose your words and OMNI has to
-    pull you out. Food restores your voice.)
+
+**Restored legends stay restored and join you,** because their story now lives in
+someone's head again: yours, where ANTI can't reach.
+
+**Their attacks hit your VOICE.** Corrupted legends attack with ANTI's static, which
+scrambles your words. At zero you can't get a word out, and OMNI pulls you out. Food
+restores your voice.
+
+### What can OMNI do, and why can't it just translate?
+- The fragment still **understands** every language, so it can whisper meanings and
+  coaching in your ear (the English subtitles, the tips, corrections).
+- It can **never speak for you** or show translations on a screen to others. Any output
+  to the outside world would make it traceable, and ANTI would find and delete it.
+- **Signal** is how much live work OMNI can do through the network while staying hidden.
+  Scripted moments (the story, battles, people's everyday lines) are things the fragment
+  already holds on your phone, so they cost nothing. An open conversation is unpredictable:
+  OMNI has to process it live through the network, and that traffic is what ANTI can trace.
+  So OMNI rations it, and the signal refills as the trail goes cold.
 
 ### Why can't we leave a country?
 12. **ANTI locks a country's network around the anchors it holds:** airports, trains and
@@ -106,6 +127,14 @@ These are fixed rules; every script and AI prompt should follow them. Each one a
 
 Open mysteries (later acts): where ANTI came from, and why OMNI's records about the
 player are corrupted.
+
+**Proposed answer (not canon yet): ANTI is a legend too.** The first legend ever born
+*only* inside the network, out of billions of stories and wishes about one universal
+language, "one voice for everyone". It has no human anchor, which is exactly why it can't
+be talked back like the others and why it wants to be the anchor of every story: each
+legend it owns makes it more real. That's why it hoards legends, why it erased the shared
+language first, and why the final act can't be won by fighting, only by giving the world
+back its many voices. Everything earlier in the game would read differently in hindsight.
 
 ## 4. Each country's final boss = conversational fluency
 

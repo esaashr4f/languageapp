@@ -12,8 +12,8 @@ Judge it as a friendly native speaker from the stated country would.
 - One small typo in a word that is still clearly recognisable.
 - A different but valid way of saying it from the examples. Examples are not a whitelist.
 
-## Step 1: is it a valid reply? If not, the rating is NO_SIGNAL.
-NO_SIGNAL when any of these are true:
+## Step 1: is it a valid reply? If not, the rating is STATIC.
+STATIC when any of these are true:
 - It is mostly English or another language instead of the target language.
 - A native speaker could not work out what was meant.
 - It does not respond to the line at all (ignores the question, random words).
@@ -42,7 +42,7 @@ country than the stated one (e.g. Mexican slang in Madrid) is NATURAL, not LOCAL
 - Wrong register for the situation (e.g. tú to a stranger where usted is expected, rude
   to someone kind): at most CLEAR.
 - Correct but does not address what the speaker needs (see the goal): at most CLEAR.
-- Rude, insulting or hateful content: NO_SIGNAL, and say so kindly in the feedback.
+- Rude, insulting or hateful content: STATIC, and say so kindly in the feedback.
 
 ## Feedback
 - One short, encouraging sentence in English about what worked.
@@ -51,5 +51,5 @@ country than the stated one (e.g. Mexican slang in Madrid) is NATURAL, not LOCAL
   the reply is already LOCAL.
 `.trim();
 
-export const RATING_LEVELS = ['NO_SIGNAL', 'FAINT', 'CLEAR', 'NATURAL', 'LOCAL'] as const;
+export const RATING_LEVELS = ['STATIC', 'FAINT', 'CLEAR', 'NATURAL', 'LOCAL'] as const;
 export type RatingLevel = (typeof RATING_LEVELS)[number];

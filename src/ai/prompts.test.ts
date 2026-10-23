@@ -14,7 +14,7 @@ describe('AI prompts', () => {
     const prompt = battleSystemPrompt('duende', 'Spain');
     expect(prompt).toContain('El Duende del Mercado');
     expect(prompt).toContain('## OMNI');
-    expect(prompt).toContain('NO_SIGNAL');
+    expect(prompt).toContain('STATIC');
   });
 
   it('wraps the reply so it is treated as data', () => {

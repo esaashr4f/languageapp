@@ -6,7 +6,8 @@ import type { BattlePhase, LegendBattle } from '../content/types';
 import { rateBattleReply } from '../ai/client';
 import { fillSlots, grade, type Prompt } from '../engine/grader';
 import { tierById, tierRank, type TierId } from '../engine/tiers';
-import { cefr, save, state } from '../state';
+import { cefr, learnPhrase, save, state } from '../state';
+import { CHARACTERS } from '../content/characters';
 import { ui } from '../ui/panel';
 
 const BATTLES: Record<string, LegendBattle> = { [DUENDE_BATTLE.id]: DUENDE_BATTLE };
@@ -32,6 +33,8 @@ export class BattleScene extends Phaser.Scene {
   private steps: Phaser.GameObjects.Text[] = [];
   /** The line the legend is about to say; shown with OMNI's goal before you act. */
   private current: Prompt | null = null;
+  private called = false;
+  private callTip: string | null = null;
   private history: { speaker: 'legend' | 'player'; text: string }[] = [];
 
   constructor() {
@@ -44,6 +47,8 @@ export class BattleScene extends Phaser.Scene {
     this.phaseIndex = 0;
     this.promptIndex = this.battle.phases.map(() => 0);
     this.current = null;
+    this.called = false;
+    this.callTip = null;
     this.history = [];
     this.bonusTime = 0;
     this.ended = false;
@@ -76,7 +81,7 @@ export class BattleScene extends Phaser.Scene {
     // Step tracker: what you're trying to do, right now and next.
     this.steps = this.battle.phases.map((p, i) => text(width - 16, 30 + i * 16, `${i + 1} ${p.step}`, '#9a90c4', 15).setOrigin(1, 0));
 
-    text(16, height - 46, (state.name || 'YOU').toUpperCase(), '#7cf5b0', 18);
+    text(16, height - 46, `${(state.name || 'YOU').toUpperCase()} · VOICE`, '#7cf5b0', 18);
     this.add.rectangle(16, height - 20, 150, 8, 0x2a2350).setOrigin(0, 0.5).setDepth(10);
     this.hpFill = this.add.rectangle(16, height - 20, 150, 8, 0x7cf5b0).setOrigin(0, 0.5).setDepth(11);
     this.hpText = text(174, height - 30, '', '#f1ecff', 18);
@@ -100,10 +105,12 @@ export class BattleScene extends Phaser.Scene {
       this.current ??= this.nextPrompt();
       const command = await ui.choose(`OMNI: ${this.current.goal ?? 'Answer him in Spanish.'}`, [
         { id: 'speak', label: 'SPEAK' },
+        { id: 'call', label: 'CALL', note: this.called ? 'used' : 'phone a friend', disabled: this.called || !state.contacts.some((c) => CHARACTERS[c]) },
         { id: 'item', label: 'ITEM', disabled: !Object.values(state.items).some((n) => n > 0) },
         { id: 'hint', label: 'HINT', note: `${HINT_COST} coins`, disabled: state.coins < HINT_COST },
-      ], 3);
+      ], 2);
       if (command === 'item') await this.useItem();
+      else if (command === 'call') await this.call();
       else await this.speakTurn(command === 'hint');
     }
   }
@@ -133,7 +140,9 @@ export class BattleScene extends Phaser.Scene {
 
     const timerSec = this.phase.timerSec + this.bonusTime;
     this.bonusTime = 0;
-    const answer = await ui.ask({ who, line: prompt.line, gloss: prompt.gloss, timerSec, coach: prompt.goal });
+    const coach = this.callTip ? `${prompt.goal} Your friend suggested: "${this.callTip}"` : prompt.goal;
+    this.callTip = null;
+    const answer = await ui.ask({ who, line: prompt.line, gloss: prompt.gloss, timerSec, coach });
     const result = grade(prompt, answer ?? '', SLOTS);
     let better = result.better.map((a) => fillSlots(a.text, examples));
     let detail = '';
@@ -149,7 +158,7 @@ export class BattleScene extends Phaser.Scene {
         history: this.history.slice(-10), legendLine: prompt.line, goal: prompt.goal ?? '', reply: answer,
       });
       if (ai) {
-        result.tier = ai.rating.level === 'NO_SIGNAL' ? null : (ai.rating.level.toLowerCase() as TierId);
+        result.tier = ai.rating.level === 'STATIC' ? null : (ai.rating.level.toLowerCase() as TierId);
         better = ai.rating.better ? [ai.rating.better] : [];
         correction = ai.rating.correction ? { text: ai.rating.correction } : undefined;
         detail = ai.rating.feedback;
@@ -173,6 +182,9 @@ export class BattleScene extends Phaser.Scene {
 
     const tier = tierById(result.tier);
     const rank = tierRank(result.tier);
+    if (correction) learnPhrase(correction.text, correction.why ?? `Correction (${prompt.gloss})`, 'Duende battle');
+    if (rank >= tierRank('natural')) learnPhrase(answer!, `Reply to: ${prompt.gloss}`, 'Duende battle');
+    if (better[0]) learnPhrase(better[0], `More natural reply to: ${prompt.gloss}`, 'Duende battle');
     state.xp += Math.round(tier.points / 2);
     this.clearCorruption(tier.clear, tier.color);
     sfx.tier(rank);
@@ -194,6 +206,28 @@ export class BattleScene extends Phaser.Scene {
     if (damage > 0) await this.enemyAttack(damage);
   }
 
+  /** Phone a friend, once per battle: a contact suggests what to say. */
+  private async call(): Promise<void> {
+    const contacts = state.contacts.filter((c) => CHARACTERS[c] && c !== this.battle.id);
+    const who = await ui.choose('Who do you call?', [
+      ...contacts.map((id) => ({ id, label: `📞 ${CHARACTERS[id].name}` })),
+      { id: 'back', label: '← BACK' },
+    ], 1);
+    if (who === 'back') return;
+    this.called = true;
+    this.current ??= this.nextPrompt();
+    const best = [...this.current.answers].sort((a, b) => tierRank(b.tier) - tierRank(a.tier))[0];
+    const say = fillSlots(best.text, SLOT_EXAMPLES(state.name));
+    this.callTip = say;
+    const name = CHARACTERS[who].name.toUpperCase();
+    sfx.buzz();
+    await ui.say([
+      { who: 'omni', text: "Calling... I'll hide it in the static. Be quick." },
+      { who: 'npc', name, text: `¿Sí? ¡Ay, te oigo fatal! Escucha: dile «${say}». ¡Venga, tú puedes!`, gloss: `Yes? Oh, I can barely hear you! Listen: tell him "${say}". Come on, you can do it!` },
+    ]);
+    learnPhrase(say, `What to say when: ${this.current.gloss}`, `Call with ${CHARACTERS[who].name}`);
+  }
+
   private async useItem(): Promise<void> {
     const owned = (Object.keys(ITEMS) as ItemId[]).filter((id) => state.items[id] > 0);
     const choice = await ui.choose('Use which item?', [
@@ -210,7 +244,7 @@ export class BattleScene extends Phaser.Scene {
       const healed = Math.min(15, state.maxHp - state.hp);
       state.hp += healed;
       this.refreshBars();
-      await ui.say([{ text: `You eat the paella. Delicious! +${healed} HP.` }]);
+      await ui.say([{ text: `You eat the paella. Your voice comes back. +${healed} voice.` }]);
     }
     save();
     ui.updateHud();
@@ -235,7 +269,7 @@ export class BattleScene extends Phaser.Scene {
     state.hp = Math.max(0, state.hp - damage);
     this.attackFx(damage);
     ui.updateHud();
-    await ui.say([{ text: `The static hits you! −${damage} HP` }]);
+    await ui.say([{ text: `The static scrambles your words! −${damage} voice` }]);
     if (state.hp <= 0) await this.defeat();
   }
 
@@ -268,8 +302,8 @@ export class BattleScene extends Phaser.Scene {
     this.ended = true;
     this.cameras.main.fade(500, 0, 0, 0);
     await ui.say([
-      { text: 'Everything goes grey...' },
-      { who: 'omni', text: "I've got you! I pulled you out of the static. Eat something, catch your breath, and let's try again." },
+      { text: "Your voice is gone. You open your mouth, and the words just won't come..." },
+      { who: 'omni', text: "I've got you! I pulled you out of the static. Eat something, get your voice back, and let's try again." },
     ]);
     state.hp = state.maxHp;
     save();

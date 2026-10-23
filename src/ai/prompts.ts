@@ -48,7 +48,7 @@ Each turn you play three roles and answer in the required JSON format.
    reply to the same line always gets the same level. Feedback is in English.
 2. ${legend.name.toUpperCase()}: write the legend's next line, in character, in the target
    language, at the learner's level, following the phase behaviour. It must react to what
-   the learner actually said (if the reply was NO_SIGNAL, react with confusion or anger),
+   the learner actually said (if the reply was STATIC, react with confusion or anger),
    and end with something clear to respond to.
 3. OMNI: write the coaching goal for the learner's next reply, in English, in OMNI's voice:
    what the legend needs to hear, never the words to say.

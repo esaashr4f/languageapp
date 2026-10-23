@@ -1,6 +1,7 @@
 // The bottom screen: dialogue boxes, menus, the answer input and the HUD.
 // Plain DOM so text stays crisp at any size and works with phone keyboards / IMEs.
 
+import { signalLabel } from '../ai/client';
 import { isMuted, setMuted, sfx } from '../audio';
 import { ITEMS, type ItemId } from '../content/items';
 import type { Line, SpeakerId } from '../content/types';
@@ -96,6 +97,8 @@ class Panel {
   idleSince = 0;
   dpadDir: Dir | null = null;
   onA: (() => void) | null = null;
+  /** Opens the phone, when the current scene allows it. */
+  onPhone: (() => void) | null = null;
   showGloss = readPref('langrpg.gloss', true);
 
   mount(root: HTMLElement): void {
@@ -133,10 +136,16 @@ class Panel {
     stats.hidden = !state.flags.opening;
     const hpPct = Math.max(0, Math.round((state.hp / state.maxHp) * 100));
     stats.innerHTML =
-      `<span class="hp"><b>HP</b> <i class="bar"><i style="width:${hpPct}%"></i></i> ${state.hp}/${state.maxHp}</span>` +
+      `<span class="hp" title="Your voice: ANTI's static scrambles it"><b>VOICE</b> <i class="bar"><i style="width:${hpPct}%"></i></i> ${state.hp}/${state.maxHp}</span>` +
       `<span>🪙 ${state.coins}</span><span>ES Lv${level()}</span>` +
       (Object.keys(ITEMS) as ItemId[]).map((id) => `<span title="${ITEMS[id].name}">${ITEMS[id].icon}×${state.items[id]}</span>`).join('');
     const toggles = el('div', 'toggles');
+    if (state.flags.opening && this.onPhone) {
+      const phone = el('button', 'chip on', `📱 ${signalLabel()}`);
+      phone.title = 'Phone (P)';
+      phone.onclick = () => this.onPhone?.();
+      toggles.append(phone);
+    }
     const gloss = el('button', 'chip' + (this.showGloss ? ' on' : ''), 'EN');
     gloss.title = 'English subtitles';
     gloss.onclick = () => {
@@ -457,7 +466,7 @@ class Panel {
         const box = this.box(undefined);
         box.classList.add('result');
         const tier = view.tier ? tierById(view.tier) : null;
-        const stamp = el('div', 'stamp', tier ? tier.label : 'No signal');
+        const stamp = el('div', 'stamp', tier ? tier.label : 'Static');
         stamp.style.setProperty('--tc', tier ? tier.color : '#ff5252');
         box.append(stamp, el('p', 'text', view.headline));
         if (view.detail) box.append(el('p', 'gloss', view.detail));

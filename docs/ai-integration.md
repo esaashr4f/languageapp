@@ -35,7 +35,7 @@ Haiku by default because it's the highest-volume call (every reply); try
 
 | Level | Meaning |
 | --- | --- |
-| No signal | Not the target language, not understandable, or doesn't respond |
+| Static | Not the target language, not understandable, or doesn't respond |
 | Faint | Meaning gets through, but with mistakes a native would notice |
 | Clear | Correct and on task, basic or textbook |
 | Natural | How a native would say it here, right register |

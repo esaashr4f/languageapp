@@ -1,9 +1,9 @@
-// Who is calling, and how many replies they have left. Uses Supabase with the service-role
-// key (server only). Without Supabase configured, runs in dev mode: everyone is "dev" and
-// usage lives in memory, so the game can be tried locally.
+// Who is calling, and how much signal they have. Uses Supabase with the service-role key
+// (server only). Without Supabase configured, runs in dev mode: everyone is "dev" and
+// signal lives in memory, so the game can be tried locally.
 
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
-import { consume, PLANS, type ConsumeResult, type PlanId, type Usage } from '../src/ai/plans';
+import { consume, freshUsage, nextBarAt, PLANS, refill, type ConsumeResult, type PlanId, type Usage } from '../src/ai/plans';
 import type { QuotaStatus } from '../src/ai/schema';
 
 const url = process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL;
@@ -20,48 +20,41 @@ export async function identify(token: string | null): Promise<string | null> {
   return error || !data.user ? null : data.user.id;
 }
 
-const devUsage = new Map<string, Usage>();
-
-function fresh(now: Date): Usage {
-  const start = new Date(now);
-  start.setUTCHours(0, 0, 0, 0);
-  return { plan: 'free', periodStart: start.toISOString(), used: 0, credits: 0 };
+export function status(usage: Usage): QuotaStatus {
+  return {
+    plan: usage.plan,
+    signal: Math.floor(usage.signal),
+    capacity: PLANS[usage.plan].capacity,
+    credits: usage.credits,
+    nextBarAt: nextBarAt(usage),
+  };
 }
 
-/** Replies left without spending one. */
-function consumeQuote(usage: Usage, now: Date): number {
-  const r = consume(usage, now);
-  return r.allowed ? r.remaining + 1 : 0;
-}
-
-export function status(result: SpendResult): QuotaStatus {
-  return { plan: result.usage.plan, remaining: result.remaining, credits: result.usage.credits, resetsAt: result.resetsAt };
-}
+export type SpendResult = ConsumeResult | { allowed: false; reason: 'conversation_limit'; usage: Usage };
 
 interface Row {
   user_id: string;
   plan: PlanId;
-  period_start: string;
-  replies_used: number;
+  signal: number;
+  signal_at: string;
   credits: number;
 }
 
-export type SpendResult = ConsumeResult | { allowed: false; reason: 'conversation_limit'; usage: Usage; remaining: number; resetsAt: string };
+const devUsage = new Map<string, Usage>();
 
 /**
- * Spend one reply for this user (plan allowance first, then credits). A conversation that
- * has reached the plan's per-conversation length is refused without being charged.
+ * Spend one bar of signal for this user. A conversation that has reached the plan's
+ * per-conversation length is refused without being charged.
  */
-export async function spendReply(userId: string, conversationTurns: number, now = new Date()): Promise<SpendResult> {
+export async function spendSignal(userId: string, conversationTurns: number, now = new Date()): Promise<SpendResult> {
   const tooLong = (usage: Usage): SpendResult | null =>
     conversationTurns >= PLANS[usage.plan].perConversation
-      ? { allowed: false, reason: 'conversation_limit', usage, remaining: consumeQuote(usage, now), resetsAt: consume(usage, now).resetsAt }
+      ? { allowed: false, reason: 'conversation_limit', usage: refill(usage, now) }
       : null;
+
   if (!admin) {
-    const before = devUsage.get(userId) ?? fresh(now);
-    const capped = tooLong(before);
-    if (capped) return capped;
-    const result = consume(before, now);
+    const before = devUsage.get(userId) ?? freshUsage('free', now);
+    const result = tooLong(before) ?? consume(before, now);
     if (result.allowed) devUsage.set(userId, result.usage);
     return result;
   }
@@ -69,17 +62,15 @@ export async function spendReply(userId: string, conversationTurns: number, now 
   for (let attempt = 0; attempt < 3; attempt++) {
     const { data } = await admin.from('entitlements').select('*').eq('user_id', userId).maybeSingle<Row>();
     const before: Usage = data
-      ? { plan: data.plan, periodStart: data.period_start, used: data.replies_used, credits: data.credits }
-      : fresh(now);
-    const capped = tooLong(before);
-    if (capped) return capped;
-    const result = consume(before, now);
+      ? { plan: data.plan, signal: data.signal, at: data.signal_at, credits: data.credits }
+      : freshUsage('free', now);
+    const result = tooLong(before) ?? consume(before, now);
     if (!result.allowed) return result;
     const next = {
       user_id: userId,
       plan: result.usage.plan,
-      period_start: result.usage.periodStart,
-      replies_used: result.usage.used,
+      signal: result.usage.signal,
+      signal_at: result.usage.at,
       credits: result.usage.credits,
       updated_at: now.toISOString(),
     };
@@ -92,12 +83,20 @@ export async function spendReply(userId: string, conversationTurns: number, now 
       .from('entitlements')
       .update(next)
       .eq('user_id', userId)
-      .eq('replies_used', data.replies_used)
+      .eq('signal_at', data.signal_at)
       .eq('credits', data.credits)
-      .eq('period_start', data.period_start)
       .select('user_id');
     if (updated && updated.length) return result;
   }
-  throw new Error('Could not record usage, please try again.');
+  throw new Error('Could not record signal use, please try again.');
 }
 
+/** Current signal without spending any (for the phone and HUD). */
+export async function peekSignal(userId: string, now = new Date()): Promise<Usage> {
+  if (!admin) return refill(devUsage.get(userId) ?? freshUsage('free', now), now);
+  const { data } = await admin.from('entitlements').select('*').eq('user_id', userId).maybeSingle<Row>();
+  const usage: Usage = data
+    ? { plan: data.plan, signal: data.signal, at: data.signal_at, credits: data.credits }
+    : freshUsage('free', now);
+  return refill(usage, now);
+}

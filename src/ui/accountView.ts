@@ -1,7 +1,8 @@
 // Full-screen log-in and profile pages, layered over both "screens".
 
-import { accountsEnabled, entitlement, flushSave, profile, signIn, signOut, type Provider } from '../account';
-import { CREDIT_PACK_REPLIES, PLANS } from '../ai/plans';
+import { accountsEnabled, flushSave, profile, signIn, signOut, type Provider } from '../account';
+import { fetchSignal, signalLabel } from '../ai/client';
+import { BATTERY_PACK_BARS, PLANS } from '../ai/plans';
 import { sfx } from '../audio';
 import { ITEMS, type ItemId } from '../content/items';
 import { COUNTRIES } from '../content/countries';
@@ -105,7 +106,7 @@ export function openProfile(): Promise<void> {
         <span>Plan</span>
         <b class="plan-name">…</b>
         <p class="muted small plan-detail"></p>
-        <button class="btn upgrade" type="button" disabled>UPGRADE TO ZABAN+ · SOON</button>
+        <button class="btn upgrade" type="button" disabled>UPGRADE · SOON</button>
       </div>
       <div class="row">
         <button class="btn back" type="button">BACK</button>
@@ -116,17 +117,15 @@ export function openProfile(): Promise<void> {
   root.querySelector('h2')!.textContent = me.name;
   root.querySelector('.email')!.textContent = me.email;
   root.querySelector('.tname')!.textContent = state.name || '—';
-  void entitlement().then((e) => {
-    if (!e) return;
-    const plan = PLANS[e.plan];
-    const left = Math.max(0, plan.replies - e.replies_used);
-    root.querySelector('.plan-name')!.textContent = plan.label;
+  void fetchSignal().then((q) => {
+    if (!q) return;
+    const plan = PLANS[q.plan];
+    root.querySelector('.plan-name')!.textContent = `${plan.label}${plan.price ? ` · $${plan.price}/month` : ''}`;
     root.querySelector('.plan-detail')!.textContent =
-      `Conversations: ${plan.replies} replies per ${plan.period}` +
-      ` (${left} left${e.credits ? ` + ${e.credits} credits` : ''}). ` +
-      (e.plan === 'free'
-        ? 'Zaban+ lets you talk for much longer.'
-        : `Need more? Credit packs add ${CREDIT_PACK_REPLIES} replies.`);
+      `Signal: ${signalLabel(q)}. ${plan.capacity} bars, refilling ${plan.perDay} a day. ` +
+      (q.plan === 'free'
+        ? `Basic ($${PLANS.basic.price}) and Premium ($${PLANS.premium.price}) give you far more signal; Premium also gets the most natural conversation partners.`
+        : `Need more? Battery packs add ${BATTERY_PACK_BARS} bars.`);
   });
   root.querySelector<HTMLButtonElement>('.back')!.onclick = close;
   root.querySelector<HTMLButtonElement>('.signout')!.onclick = async () => {

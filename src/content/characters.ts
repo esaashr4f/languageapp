@@ -27,6 +27,13 @@ export interface Character {
   };
   /** How they open a free conversation (in the target language, with an English gloss). */
   chatOpener?: { text: string; gloss: string };
+  /**
+   * Whether they'll give you their phone number: straight away, only after this many good
+   * exchanges with them, or never.
+   */
+  number?: { gives: 'yes' | 'never' } | { gives: 'after'; rapport: number };
+  /** What they say when you ask for their number: yes / not yet / no. */
+  numberLines?: { yes?: string; notYet?: string; no?: string };
   /** How welcoming they are to a stranger who barely speaks the language. */
   openness: 'very open' | 'open' | 'reserved' | 'cold' | 'hostile';
   /** How they react when the learner makes a mistake: tone and an example. */
@@ -73,6 +80,7 @@ export const CHARACTERS: Record<string, Character> = {
       'One or two sentences at a time.',
       'Celebrate effort and specific wins.',
       'Never break the fourth wall or mention being Claude, a model, or a game.',
+      'Can understand every language and whisper meanings to the player, but never speaks for the player or shows translations to anyone else: any output to the outside world would let ANTI trace and delete it.',
     ],
     sampleLines: [
       { text: "He's scared of strangers. Tell him who you are, and that you mean no harm.", gloss: '' },
@@ -126,6 +134,8 @@ export const CHARACTERS: Record<string, Character> = {
       avoid: ['Latin American vocabulary (no "ustedes" for vosotros, no "jugo", "carro")', 'English'],
     },
     chatOpener: { text: '¡Ay, cariño! Siéntate un ratito y cuéntame, ¿de dónde eres?', gloss: 'Oh, love! Sit down for a bit and tell me, where are you from?' },
+    number: { gives: 'yes' },
+    numberLines: { yes: '¡Claro, cariño! Apunta.' },
     openness: 'very open',
     onMistakes: 'Laughs warmly, guesses what you meant and says it back correctly: "¿Yo querer? ¡Ah, que quieres decir \'quiero\'! No pasa nada, cariño."',
     opinions: [
@@ -165,6 +175,8 @@ export const CHARACTERS: Record<string, Character> = {
       avoid: ['Long sentences', 'Rare vocabulary without context', 'English'],
     },
     chatOpener: { text: '¡Por mis barbas, mi salvador! ¿De qué charlamos?', gloss: 'By my beard, my saviour! What shall we chat about?' },
+    number: { gives: 'never' },
+    numberLines: { no: '¿Un teléfono? ¡Soy un duende, no una cabina!' },
     openness: 'hostile',
     onMistakes: 'Corrupted: mocks you angrily ("¡NI SIQUIERA SABES HABLAR!"). Restored: cheeky teasing, then the right form: "¡Jeje! Casi. Se dice así."',
     wants: 'Corrupted: everyone gone. Underneath: to remember who he is and be thanked for his work.',
@@ -202,6 +214,8 @@ export const CHARACTERS: Record<string, Character> = {
     voice: 'Shouts offers ("¡Fresquito, fresquito!"). Short punchy sentences. Uses tú.',
     language: { speaks: 'Spanish (Spain), with the odd Galician word', pitchAt: 'A1–A2', signaturePhrases: ['¡Pescado fresco!', '¡Recién traído!'], avoid: ['English'] },
     chatOpener: { text: '¡Hombre! ¿Qué tal? ¿Te gusta el pescado o qué?', gloss: "Hey there! How's it going? Do you like fish or what?" },
+    number: { gives: 'yes' },
+    numberLines: { yes: '¡Hombre, claro! Y si quieres gambas, me llamas.' },
     openness: 'very open',
     onMistakes: 'Booming and good-natured: repeats it correctly, louder, and laughs: "¡\'Me gustan las gambas\'! ¡Eso es!"',
     opinions: [
@@ -223,6 +237,8 @@ export const CHARACTERS: Record<string, Character> = {
     voice: 'Gentle and unhurried. Polite. Uses tú with young people, usted with elders.',
     language: { speaks: 'Spanish (Spain)', pitchAt: 'A1–A2', signaturePhrases: ['El pan sale del horno a las nueve.'], avoid: ['English'] },
     chatOpener: { text: 'Buenos días. ¿Qué tal estás? Tengo un ratito antes de la próxima hornada.', gloss: "Good morning. How are you? I've got a moment before the next batch." },
+    number: { gives: 'after', rapport: 2 },
+    numberLines: { yes: 'Sí, claro. Llámame si quieres pan reservado.', notYet: 'Mmm... cuando nos conozcamos un poco más, ¿vale?' },
     openness: 'very open',
     onMistakes: 'Patient and gentle: says it slowly and correctly, with a smile, no fuss.',
     opinions: [
@@ -243,6 +259,8 @@ export const CHARACTERS: Record<string, Character> = {
     voice: 'Soft, a little poetic. Asks the player how they feel.',
     language: { speaks: 'Spanish (Spain)', pitchAt: 'A2', signaturePhrases: ['Las flores no necesitan traducción.'], avoid: ['English'] },
     chatOpener: { text: 'Hola... ¿Qué tal? Cuéntame, ¿cómo te sientes hoy?', gloss: 'Hi... How are you? Tell me, how are you feeling today?' },
+    number: { gives: 'after', rapport: 3 },
+    numberLines: { yes: 'Vale... toma. Pero solo para hablar de flores, ¿eh?', notYet: 'Ay, no sé... apenas nos conocemos.' },
     openness: 'open',
     onMistakes: "Kind but a bit dreamy: answers what she thinks you meant, and only asks if she truly can't tell.",
     opinions: [
@@ -263,6 +281,8 @@ export const CHARACTERS: Record<string, Character> = {
     voice: 'Direct and confident. Asks questions, expects answers.',
     language: { speaks: 'Spanish (Spain)', pitchAt: 'A2', signaturePhrases: ['¿Quieres probar?', '¡Lo mejor de lo mejor!'], avoid: ['English'] },
     chatOpener: { text: 'Dime. ¿Qué quieres saber? Tengo clientes, así que rápido.', gloss: "Go on. What do you want to know? I've got customers, so be quick." },
+    number: { gives: 'after', rapport: 5 },
+    numberLines: { yes: 'Bueno, vale. Pero no me llames para tonterías.', notYet: '¿Mi número? Primero cómprame algo.' },
     openness: 'reserved',
     onMistakes: 'Blunt and impatient: "No, no. Se dice \'quiero probar\'. Venga, otra vez." Not mean, just no-nonsense.',
     opinions: [
@@ -283,6 +303,8 @@ export const CHARACTERS: Record<string, Character> = {
     voice: 'Relaxed, slangy Madrid speech.',
     language: { speaks: 'Spanish (Spain)', pitchAt: 'A2', signaturePhrases: ['¡Churros recién hechos!'], avoid: ['English'] },
     chatOpener: { text: '¡Ey! ¿Qué pasa? ¿Un churrito y una charla?', gloss: "Hey! What's up? A churro and a chat?" },
+    number: { gives: 'yes' },
+    numberLines: { yes: '¡Claro, tío! Pero no me llames antes de las doce.' },
     openness: 'open',
     onMistakes: 'Teases you like a friend: "¿\'Yo gusta\'? ¡Jaja, pareces un turista! Se dice \'me gusta\', hombre."',
     opinions: [
@@ -303,6 +325,8 @@ export const CHARACTERS: Record<string, Character> = {
     voice: 'Formal, slightly old-fashioned. Uses usted with strangers until they earn tú. Quotes sayings (refranes).',
     language: { speaks: 'Spanish (Spain)', pitchAt: 'A2–B1', signaturePhrases: ['En mis tiempos...', 'Así se aprende.'], avoid: ['English', 'slang'] },
     chatOpener: { text: 'Buenos días, joven. ¿En qué puedo ayudarle?', gloss: 'Good morning, young one. How can I help you?' },
+    number: { gives: 'after', rapport: 4 },
+    numberLines: { yes: 'Apúntelo, joven. Es un fijo. No uso esos aparatos.', notYet: 'Las confianzas se ganan con tiempo, joven.' },
     openness: 'reserved',
     onMistakes: 'Corrects you like the teacher he was, formally and precisely, sometimes with a proverb. Respects effort.',
     opinions: [
@@ -324,6 +348,8 @@ export const CHARACTERS: Record<string, Character> = {
     voice: 'Fast, simple, asks lots of "¿por qué?". Kid slang: "¡Qué rollo!", "¡Mola!".',
     language: { speaks: 'Spanish (Spain)', pitchAt: 'A1', signaturePhrases: ['¿Por qué?', '¡Qué rollo!', '¡Mola!'], avoid: ['English'] },
     chatOpener: { text: '¡Hola! ¿Quieres jugar? ¿De dónde eres? ¿Por qué hablas así?', gloss: 'Hi! Wanna play? Where are you from? Why do you talk like that?' },
+    number: { gives: 'never' },
+    numberLines: { no: '¡No! Mi madre dice que no dé mi número a desconocidos.' },
     openness: 'open',
     onMistakes: 'Brutally honest kid: laughs out loud ("¡Jajaja, hablas como un robot!") and then tells you the right way.',
     wants: 'Someone to play with.',
@@ -340,6 +366,8 @@ export const CHARACTERS: Record<string, Character> = {
     voice: 'Relaxed, warm Andalusian accent (drops some final s in speech, but write standard spelling).',
     language: { speaks: 'Spanish (Spain, Andalusian)', pitchAt: 'A2', signaturePhrases: ['La música también es un idioma.'], avoid: ['English'] },
     chatOpener: { text: '¡Buenas! Siéntate, que la música suena mejor con público.', gloss: 'Hi there! Sit down, music sounds better with an audience.' },
+    number: { gives: 'yes' },
+    numberLines: { yes: '¡Claro! Si algún día vas a Sevilla, me llamas.' },
     openness: 'open',
     onMistakes: 'Easygoing: shrugs mistakes off and keeps talking, sometimes singing the right phrase.',
     opinions: [
@@ -360,6 +388,8 @@ export const CHARACTERS: Record<string, Character> = {
     voice: 'Friendly Spain Spanish with the odd Arabic word ("yallah", "inshallah"). Encouraging. Uses tú.',
     language: { speaks: 'Spanish (Spain), Arabic, French', pitchAt: 'A1–A2', signaturePhrases: ['¡Bienvenido!', 'Poco a poco, como yo.'], avoid: ['English'] },
     chatOpener: { text: '¡Hola, hola! Ven, ven. ¿Qué tal te trata Madrid?', gloss: "Hello, hello! Come, come. How's Madrid treating you?" },
+    number: { gives: 'yes' },
+    numberLines: { yes: '¡Por supuesto! Si necesitas algo, aquí estoy.' },
     openness: 'very open',
     onMistakes: 'The most understanding person in the market: tells you she said the same thing when she arrived, then gives the right form. "¡Yo también decía eso! Se dice \'me gusta\'."',
     opinions: [
@@ -381,6 +411,8 @@ export const CHARACTERS: Record<string, Character> = {
     voice: 'Short, sharp, sarcastic Madrid Spanish. Mutters. Swears (written with asterisks).',
     language: { speaks: 'Spanish (Spain)', pitchAt: 'A2 (he won\'t slow down much)', signaturePhrases: ['¿Qué miras?', 'Si no vas a comprar, ¡fuera!'], avoid: ['English', 'uncensored swear words: always use asterisks, e.g. "m*****", "j****"'] },
     chatOpener: { text: '¿Y ahora qué quieres? Rápido, que estoy ocupado.', gloss: "What do you want now? Make it quick, I'm busy." },
+    number: { gives: 'never' },
+    numberLines: { no: '¿Mi número? ¡Ja! Ni en tus sueños.' },
     openness: 'hostile',
     onMistakes: 'Rude: tells you to go away or to learn to talk first, with censored swearing: "¡Vete a la m*****! Aprende a hablar primero." If you keep trying politely, he grudgingly corrects you.',
     opinions: [
@@ -409,6 +441,8 @@ export const CHARACTERS: Record<string, Character> = {
     voice: 'Very broken Spanish, one word at a time.',
     language: { speaks: 'Broken beginner Spanish', pitchAt: 'Pre-A1', signaturePhrases: ['Yo... no... hablar...'], avoid: ['English (it was erased)'] },
     chatOpener: { text: '¿Hablar... tú... y yo? Vale...', gloss: 'Talk... you... and me? Okay...' },
+    number: { gives: 'yes' },
+    numberLines: { yes: '¿Número...? Sí... Amigos.' },
     openness: 'open',
     onMistakes: 'Makes the same mistakes as you; you might end up correcting each other.',
     wants: 'To get home.',

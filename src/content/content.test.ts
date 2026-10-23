@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { fillSlots, grade, type Prompt } from '../engine/grader';
 import { tierRank } from '../engine/tiers';
-import { CARMEN_ORDER, DUENDE_BATTLE, SLOT_EXAMPLES, SLOTS } from './spain/act1';
+import { ASK_NUMBER, CARMEN_ORDER, DUENDE_BATTLE, SLOT_EXAMPLES, SLOTS } from './spain/act1';
 
-const prompts: Prompt[] = [CARMEN_ORDER, ...DUENDE_BATTLE.phases.flatMap((p) => p.prompts)];
+const prompts: Prompt[] = [CARMEN_ORDER, ASK_NUMBER, ...DUENDE_BATTLE.phases.flatMap((p) => p.prompts)];
 const examples = SLOT_EXAMPLES('Alex');
 
 describe('Spain Act 1 content', () => {

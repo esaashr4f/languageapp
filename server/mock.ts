@@ -21,7 +21,7 @@ export function mockChat(req: ChatRequest): ChatTurnResult {
   const follow = FOLLOW_UPS[turn % FOLLOW_UPS.length];
   return {
     rating: {
-      level: english ? 'NO_SIGNAL' : 'CLEAR',
+      level: english ? 'STATIC' : 'CLEAR',
       understood_as: '(offline demo: not actually understood)',
       feedback: english ? 'Try saying it in Spanish!' : 'Nice, keep going!',
       correction: null,

@@ -1,4 +1,7 @@
-# Monetisation proposal (draft for discussion)
+# Monetisation
+
+**Decided:** energy is OMNI's Signal; tiers Free / Basic $14.99 / Premium $34.99 (implemented in
+`src/ai/plans.ts`, enforced on the server). Still to build: Stripe checkout and battery packs.
 
 ## Principles
 

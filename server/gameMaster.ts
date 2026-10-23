@@ -7,10 +7,12 @@ import type { z } from 'zod';
 /**
  * Model routing (override with env vars to experiment):
  * - chat and rating: Claude Haiku 5.5, fast and cheap enough for every reply;
- * - legends' big conversations: Claude Opus 5.5.
+ * - Premium conversations and legends' big conversations: Claude Opus 5.5.
  */
 export const MODELS = {
   chat: process.env.ZABAN_CHAT_MODEL ?? 'claude-haiku-5-5',
+  /** Premium plan conversations: the most natural partners. */
+  premiumChat: process.env.ZABAN_PREMIUM_CHAT_MODEL ?? 'claude-opus-5-5',
   rater: process.env.ZABAN_RATER_MODEL ?? 'claude-haiku-5-5',
   legend: process.env.ZABAN_LEGEND_MODEL ?? 'claude-opus-5-5',
 };

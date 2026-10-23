@@ -74,11 +74,28 @@ export const CARMEN_SERVED: Line[] = [
 export const CARMEN_AFTER_ORDER: Line[] = [
   { who: 'carmen', text: 'Toma, y unos churros. ¡Invita la casa!', gloss: "Here, and some churros. They're on the house!" },
   { text: 'You got 2× Churros! (+8 seconds on an answer in battle)' },
+  { who: 'carmen', text: 'Y toma, mi número. Si necesitas algo, me llamas, ¿vale?', gloss: "And here, my number. If you need anything, call me, okay?" },
+  { text: "Carmen's number was saved to your phone (📱 → Contacts)." },
+  { who: 'omni', text: "Nice. Keep numbers: in a fight, you can CALL a friend once for help. You can ask people for theirs while you chat, in Spanish. Not everyone will say yes, though." },
   { who: 'carmen', text: 'Pero ten cuidado... algo raro pasa en el puesto de fruta.', gloss: "But be careful... something strange is happening at the fruit stall." },
   { who: 'carmen', text: 'El duende del mercado... ya no es él.', gloss: "The market's duende... he's not himself anymore." },
   { who: 'omni', text: "A duende is a house spirit from Spanish folklore. ANTI must have corrupted him." },
   { who: 'omni', text: "He's part of Spain's stories. Talk to him in Spanish and we can bring him back. The static is up north." },
 ];
+
+/** Asking for someone's number, in Spanish. */
+export const ASK_NUMBER: Prompt = {
+  line: '(Ask for their phone number.)',
+  gloss: '',
+  goal: 'Ask for their phone number, in Spanish.',
+  answers: [
+    faint('tu número por favor', '¿me das tu número, por favor?', 'Make it a question: "¿Me das...?" (Can you give me...?)'),
+    faint('número teléfono', '¿me das tu número de teléfono?', 'Add the verb and "de": "¿Me das tu número de teléfono?"'),
+    ...ans('clear', '¿me das tu número?', '¿cuál es tu número?', '¿me das tu número, por favor?', '¿me das tu número de teléfono?'),
+    ...ans('natural', '¿me pasas tu número?', '¿me das tu teléfono?', '¿te puedo pedir tu número?', '¿me dejas tu número?'),
+    ...ans('local', '¿me pasas tu móvil?', '¿me das tu móvil?', '¿me pasas tu whatsapp?'),
+  ],
+};
 
 export const CARMEN_IDLE: Line[] = [
   { who: 'carmen', text: 'El puesto de fruta está allí arriba. ¡Ánimo!', gloss: "The fruit stall is up there. You've got this!" },
@@ -106,10 +123,10 @@ export const DUENDE_BATTLE: LegendBattle = {
   corruptName: '??? (CORRUPTED)',
   trueName: 'DUENDE DEL MERCADO',
   intro: [
-    { who: 'omni', text: "There he is. ANTI's static is all over him." },
-    { who: 'omni', text: "He'll attack with words. Every time he shouts, I'll tell you what he needs to hear. You answer in Spanish." },
-    { who: 'omni', text: 'Three steps: calm him down, help him remember who he is, then just talk with him. The more natural you sound, the more static you clear.' },
-    { who: 'omni', text: 'Bad or slow answers hurt. Use ITEM for churros if you need more time. Ready?' },
+    { who: 'omni', text: "There he is. ANTI rewrote his story, and now it's using him to hold my relay." },
+    { who: 'omni', text: "We give him an anchor outside the network: you. Every time you answer him in Spanish, you're telling his story again with living words." },
+    { who: 'omni', text: "He'll attack with ANTI's static. It scrambles your words, so watch your VOICE. Every time he shouts, I'll tell you what he needs to hear." },
+    { who: 'omni', text: 'Three steps: calm him down, help him remember who he is, then just talk with him. ITEM for food, CALL if you need a friend. Ready?' },
     { who: 'corrupt', text: '¡¿QUIÉN ANDA AHÍ?! ¡ESTE MERCADO ES DE ANTI!', gloss: "WHO'S THERE?! THIS MARKET BELONGS TO ANTI!" },
   ],
   phases: [
@@ -279,7 +296,7 @@ export const DUENDE_BATTLE: LegendBattle = {
     { text: 'The last of the static peels away like old paint.' },
     { who: 'duende', text: '¡Ay...! Por fin. ¡Gracias, amigo!', gloss: 'Oh...! Finally. Thank you, friend!' },
     { who: 'duende', text: 'Soy el duende del mercado. Desde hoy, cuenta conmigo.', gloss: "I'm the market's duende. From today on, you can count on me." },
-    { text: 'The DUENDE joined your spellbook! (+30 coins, +50 XP)' },
-    { who: 'omni', text: "We did it. That's one legend ANTI can't have. Let's tell Carmen." },
+    { text: 'The DUENDE is anchored in you now. He joined your spellbook! (+30 coins, +50 XP)' },
+    { who: 'omni', text: "We did it. His story lives in your head now, and ANTI can't reach in there. He's let go of the relay." },
   ],
 };

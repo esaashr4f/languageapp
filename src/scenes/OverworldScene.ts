@@ -2,19 +2,20 @@ import Phaser from 'phaser';
 import { sfx } from '../audio';
 import {
   CARMEN_AFTER_ALL, CARMEN_AFTER_ORDER, CARMEN_GREETING, CARMEN_IDLE, CARMEN_MISS, CARMEN_ORDER, CARMEN_REWARD,
-  CARMEN_SERVED, CARMEN_SERVED_FAINT, CARMEN_SERVED_NATIVE, DUENDE_BATTLE, DUENDE_RESTORED_IDLE, NEED_WORDS, SLOT_EXAMPLES, SLOTS,
+  ASK_NUMBER, CARMEN_SERVED, CARMEN_SERVED_FAINT, CARMEN_SERVED_NATIVE, DUENDE_BATTLE, DUENDE_RESTORED_IDLE, NEED_WORDS, SLOT_EXAMPLES, SLOTS,
 } from '../content/spain/act1';
 import {
   AFTER_BATTLE, ARRIVAL, ARRIVE_AT, BENCHES, DEAD_STALL, FOUNTAIN, GLITCH_ZONE, LAMPS, MAP_COLS, MAP_ROWS,
-  MARKET_NPCS, PLANTS, STALLS, type MarketNpc,
+  MARKET_NPCS, PLANTS, RELAY, RELAY_HELD, RELAY_MINE, RELAY_PROMPT, RELAY_RECLAIM, STALLS, type MarketNpc,
 } from '../content/spain/market';
-import { sendChat } from '../ai/client';
+import { fetchSignal, rememberQuota, sendChat, signalLabel } from '../ai/client';
 import type { ChatRequest, LimitReason, QuotaStatus } from '../ai/schema';
 import { CHARACTERS } from '../content/characters';
 import type { Line } from '../content/types';
 import { fillSlots, grade } from '../engine/grader';
 import { tierById, tierRank, type TierId } from '../engine/tiers';
-import { cefr, save, state } from '../state';
+import { addContact, cefr, learnPhrase, logChat, save, state, type ChatLog } from '../state';
+import { openPhone } from '../ui/phone';
 import { ui, type Dir } from '../ui/panel';
 
 const TILE = 16;
@@ -49,13 +50,14 @@ function buildMap(): { grid: string[][]; textures: string[][] } {
   BENCHES.forEach(({ x, y }) => put(x, y, 'B', 't_bench'));
   LAMPS.forEach(({ x, y }) => put(x, y, 'L', 't_lamp'));
   PLANTS.forEach(({ x, y }) => put(x, y, 'P', 't_plant'));
+  put(RELAY.x, RELAY.y, 'R', 't_relay_anti');
   const mid = Math.floor(MAP_COLS / 2) - 1;
   put(mid, MAP_ROWS - 1, 'E', 't_entrance');
   put(mid + 1, MAP_ROWS - 1, 'E', 't_entrance');
   return { grid, textures };
 }
 
-const SOLID = new Set(['W', 'A', 'C', 'F', 'O', 'B', 'L', 'P', 'E']);
+const SOLID = new Set(['W', 'A', 'C', 'F', 'O', 'B', 'L', 'P', 'E', 'R']);
 const DELTA: Record<Dir, [number, number]> = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] };
 
 interface Npc {
@@ -77,6 +79,7 @@ export class OverworldScene extends Phaser.Scene {
   private scripting = false;
   private npcs: Npc[] = [];
   private glitchTiles: Phaser.GameObjects.Image[] = [];
+  private relay: Phaser.GameObjects.Image | null = null;
   private keys!: Record<string, Phaser.Input.Keyboard.Key>;
   private from = '';
 
@@ -117,8 +120,13 @@ export class OverworldScene extends Phaser.Scene {
     this.keys = kb.addKeys('UP,DOWN,LEFT,RIGHT,W,A,S,D,SPACE,ENTER,Z', false) as Record<string, Phaser.Input.Keyboard.Key>;
     kb.on('keydown', (e: KeyboardEvent) => {
       if (['Space', 'Enter', 'KeyZ'].includes(e.code)) this.interact();
+      if (e.code === 'KeyP') this.phone();
     });
     ui.onA = () => this.interact();
+    ui.onPhone = () => this.phone();
+    void fetchSignal().then(() => ui.updateHud());
+    this.events.once('shutdown', () => (ui.onPhone = null));
+    ui.updateHud();
     ui.dpadDir = null;
 
     this.time.addEvent({ delay: 120, loop: true, callback: () => this.animateGlitch() });
@@ -126,6 +134,7 @@ export class OverworldScene extends Phaser.Scene {
     this.cameras.main.fadeIn(500, 0, 0, 0);
 
     if (!state.flags.arrived) void this.script(() => this.arrive());
+    else if (state.flags.duendeRestored && !state.flags.relayMercado) void this.script(() => ui.say(RELAY_PROMPT));
     else if (state.flags.duendeRestored && !state.flags.gotPaella) {
       void this.script(() => ui.say([{ who: 'omni', text: 'Carmen will want to hear about this. Go talk to her!' }]));
     } else this.idle();
@@ -142,7 +151,9 @@ export class OverworldScene extends Phaser.Scene {
         let key = textures[y][x];
         if (ch === 'G' && restored) key = 't_floor';
         if (ch === 'F' && restored) key = 't_counter_fruit';
+        if (ch === 'R' && state.flags.relayMercado) key = 't_relay_omni';
         const img = this.add.image(x * TILE + TILE / 2, y * TILE + TILE / 2, key);
+        if (ch === 'R') this.relay = img;
         if (ch === 'G' && !restored) this.glitchTiles.push(img);
       }
     }
@@ -296,7 +307,10 @@ export class OverworldScene extends Phaser.Scene {
     if (this.scripting || this.moving || ui.busy || performance.now() - ui.idleSince < 250) return;
     const [dx, dy] = DELTA[this.facing];
     const npc = this.npcs.find((n) => n.x === this.pos.x + dx && n.y === this.pos.y + dy);
-    if (!npc) return;
+    if (!npc) {
+      if (this.tileAt(this.pos.x + dx, this.pos.y + dy) === 'R') void this.script(() => this.useRelay());
+      return;
+    }
     // Face the player while talking.
     if (dx) npc.sprite.setFlipX(dx > 0);
     if (npc.id === 'carmen') {
@@ -326,41 +340,38 @@ export class OverworldScene extends Phaser.Scene {
   // ---------------------------------------------------------------------------
   // Free conversations (AI): talk about anything, for as long as the plan allows.
 
-  private quota: QuotaStatus | null = null;
   private mockNoted = false;
-
-  private meter(): string | undefined {
-    if (!this.quota) return undefined;
-    return `💬 ${this.quota.remaining} left ${this.quota.plan === 'free' ? 'today' : 'this month'}`;
-  }
 
   private async offerChat(npcId: string, name: string): Promise<void> {
     const choice = await ui.choose('', [
-      { id: 'chat', label: '💬 CHAT', note: 'Talk about anything, in Spanish' },
+      { id: 'chat', label: '💬 CHAT', note: `Talk about anything, in Spanish · ${signalLabel()}` },
       { id: 'bye', label: '👋 BYE' },
     ]);
     if (choice === 'chat') await this.converse(npcId, name);
   }
 
-  private limitLines(reason: LimitReason | 'offline', name: string): Line[] {
-    const resets = this.quota ? new Date(this.quota.resetsAt).toLocaleDateString(undefined, { day: 'numeric', month: 'long' }) : 'soon';
-    const goodbye: Line = { who: 'npc', name, text: '¡Bueno, tengo que seguir trabajando! ¡Hasta luego!', gloss: 'Well, I have to get back to work! See you later!' };
+  private limitLines(reason: LimitReason | 'offline', name: string, quota: QuotaStatus | null): Line[] {
+    const goodbye: Line = { who: 'npc', name, text: '¡Bueno, tengo que seguir! ¡Hasta luego!', gloss: 'Well, I have to get going! See you later!' };
     switch (reason) {
       case 'sign_in_required':
-        return [{ who: 'omni', text: 'To keep long conversations going I need a secure line. Sign in from the title menu and I can open one.' }];
+        return [{ who: 'omni', text: 'To hold a long conversation I need a secure line. Sign in from the title menu and I can open one.' }];
       case 'conversation_limit':
-        return [goodbye, { who: 'omni', text: "Time to move on. ANTI's static creeps closer whenever we stay in one place too long." }];
-      case 'free_limit':
+        return [goodbye, { who: 'omni', text: "Time to move on. If I listen in one place too long, ANTI starts to trace me." }];
+      case 'no_signal': {
+        const wait = quota?.nextBarAt ? Math.max(1, Math.ceil((new Date(quota.nextBarAt).getTime() - Date.now()) / 60_000)) : null;
         return [
           goodbye,
-          { who: 'omni', text: "We need to go. Long conversations make my signal easy for ANTI to trace, and I've used up today's safe signal." },
-          { who: 'omni', text: 'It recharges tomorrow. (Free plan: a few conversations a day. Zaban+ lets us talk for much longer.)' },
+          { who: 'omni', text: "I'm out of signal. Following an open conversation means working live through the network, and ANTI is close to tracing me. I have to go quiet until the trail goes cold." },
+          {
+            who: 'omni',
+            text:
+              (wait ? `My next bar comes back in about ${wait} minutes. ` : 'It comes back on its own. ') +
+              (quota?.plan === 'free'
+                ? 'The story and battles never need signal. (Basic and Premium give me a lot more.)'
+                : 'Battery packs can top me up if we need more now.'),
+          },
         ];
-      case 'plan_limit':
-        return [
-          goodbye,
-          { who: 'omni', text: `That's this month's signal used up. It recharges on ${resets}. If we need more before then, we can top up with conversation credits.` },
-        ];
+      }
       case 'offline':
         return [{ who: 'omni', text: "I can't reach the network right now. Let's try again in a bit." }];
     }
@@ -370,20 +381,35 @@ export class OverworldScene extends Phaser.Scene {
     const opener = CHARACTERS[npcId].chatOpener ?? { text: '¿Qué tal? ¿De qué quieres hablar?', gloss: 'How are you? What do you want to talk about?' };
     let line = opener.text;
     let gloss = opener.gloss;
-    let note: string | null = 'Chat about anything you like. Tap IDEAS if you get stuck, BYE to leave.';
+    let note: string | null = 'Chat about anything you like. Each reply uses one bar of signal. IDEAS if you get stuck, BYE to leave.';
     let ideas = CHARACTERS[npcId].knows.slice(0, 3).map((k) => `Ask about ${k.toLowerCase()}`);
     const history: ChatRequest['history'] = [{ speaker: 'npc', text: line }];
+    const log: ChatLog = { npcId, name, at: Date.now(), lines: [{ speaker: 'npc', text: line, gloss }] };
+    const finish = () => {
+      logChat(log);
+      save();
+      ui.updateHud();
+    };
 
     for (;;) {
       const step = await ui.talk({
-        who: 'npc', name, line, gloss, note, meter: this.meter(),
-        actions: [{ id: 'ideas', label: '💡 IDEAS' }, { id: 'bye', label: '👋 BYE' }],
+        who: 'npc', name, line, gloss, note, meter: signalLabel(),
+        actions: [
+          { id: 'ideas', label: '💡 IDEAS' },
+          ...(state.contacts.includes(npcId) ? [] : [{ id: 'number', label: '📞 NUMBER' }]),
+          { id: 'bye', label: '👋 BYE' },
+        ],
       });
       note = null;
       if ('action' in step) {
         if (step.action === 'bye') {
           await ui.say([{ who: 'npc', name, text: '¡Hasta luego! Vuelve cuando quieras.', gloss: 'See you later! Come back any time.' }]);
-          return;
+          return finish();
+        }
+        if (step.action === 'number') {
+          const lines = await this.askNumber(npcId, name);
+          log.lines.push(...lines.map((l) => ({ speaker: (l.who === 'npc' ? 'npc' : 'omni') as 'npc' | 'omni', text: l.text, gloss: l.gloss })));
+          continue;
         }
         note = `Ideas: ${ideas.join(' · ')}`;
         continue;
@@ -391,19 +417,28 @@ export class OverworldScene extends Phaser.Scene {
 
       ui.waiting('npc', name, '');
       const out = await sendChat({ country: 'Spain', npcId, playerName: state.name, playerLevel: cefr(), history, reply: step.text });
-      if ('quota' in out && out.quota) this.quota = out.quota;
+      if ('quota' in out) rememberQuota(out.quota);
       if (!out.ok) {
-        await ui.say(this.limitLines(out.reason, name));
-        return;
+        await ui.say(this.limitLines(out.reason, name, 'quota' in out ? out.quota : null));
+        return finish();
       }
 
       const r = out.result;
       history.push({ speaker: 'player', text: step.text }, { speaker: 'npc', text: r.npc.line });
-      const tier = r.rating.level === 'NO_SIGNAL' ? null : tierById(r.rating.level.toLowerCase() as TierId);
+      log.lines.push({ speaker: 'player', text: step.text });
+      const tier = r.rating.level === 'STATIC' ? null : tierById(r.rating.level.toLowerCase() as TierId);
       state.xp += tier ? Math.round(tier.points / 5) : 0;
+      if (tier && tierRank(tier.id) >= tierRank('clear')) state.rapport[npcId] = (state.rapport[npcId] ?? 0) + 1;
+      if (r.rating.correction) {
+        learnPhrase(r.rating.correction, `Correction for "${step.text}"`, `Chat with ${name}`);
+        log.lines.push({ speaker: 'omni', text: `Correction: ${r.rating.correction}` });
+      }
+      if (r.rating.better) learnPhrase(r.rating.better, `A more natural way to say: ${r.rating.understood_as}`, `Chat with ${name}`);
+      if (tier && tierRank(tier.id) >= tierRank('natural')) learnPhrase(step.text, r.rating.understood_as, `You, to ${name}`);
+      log.lines.push({ speaker: 'npc', text: r.npc.line, gloss: r.npc.gloss });
       save();
       ui.updateHud();
-      ui.toast(tier ? `${tier.label}: ${tier.blurb}` : 'No signal: try it in Spanish');
+      ui.toast(tier ? `${tier.label}: ${tier.blurb}` : 'Static: try it in Spanish');
       if (tier) sfx.tier(tierRank(tier.id));
       else sfx.miss();
 
@@ -417,9 +452,62 @@ export class OverworldScene extends Phaser.Scene {
       }
       if (r.ended) {
         await ui.say([{ who: 'npc', name, text: line, gloss }]);
-        return;
+        return finish();
       }
     }
+  }
+
+  private phone(): void {
+    if (this.scripting || this.moving || ui.busy) return;
+    void this.script(() => openPhone());
+  }
+
+  private async useRelay(): Promise<void> {
+    if (state.flags.relayMercado) return ui.say(RELAY_MINE);
+    if (!state.flags.duendeRestored) return ui.say(RELAY_HELD);
+    await ui.say(RELAY_RECLAIM.slice(0, 1));
+    sfx.restore();
+    this.cameras.main.flash(500, 89, 200, 255);
+    this.relay?.setTexture('t_relay_omni');
+    state.flags.relayMercado = true;
+    save();
+    await ui.say(RELAY_RECLAIM.slice(1));
+  }
+
+  /** Ask for someone's number, in Spanish. Whether they give it depends on who they are. */
+  private async askNumber(npcId: string, name: string): Promise<Line[]> {
+    const c = CHARACTERS[npcId];
+    const answer = await ui.ask({ who: 'self', line: ASK_NUMBER.line, coach: ASK_NUMBER.goal });
+    const result = grade(ASK_NUMBER, answer ?? '', SLOTS);
+    if (!result.tier) {
+      sfx.miss();
+      const lines: Line[] = [
+        { who: 'npc', name, text: '¿Perdona? No te entiendo.', gloss: "Sorry? I don't understand you." },
+        { who: 'omni', text: `Try: "${ASK_NUMBER.answers.find((a) => a.tier === 'clear')!.text}"` },
+      ];
+      await ui.say(lines);
+      return lines;
+    }
+    sfx.tier(tierRank(result.tier));
+    if (result.matched?.fix) learnPhrase(result.matched.fix, result.matched.why ?? 'Correction', `Asking ${name}`);
+    learnPhrase(result.tier === 'faint' ? result.matched!.fix! : answer!, 'Asking for someone\'s phone number', `Asking ${name}`);
+
+    const rule = c.number ?? { gives: 'never' as const };
+    const rapport = state.rapport[npcId] ?? 0;
+    const lines: Line[] = [];
+    if (rule.gives === 'yes' || (rule.gives === 'after' && rapport >= rule.rapport)) {
+      lines.push({ who: 'npc', name, text: c.numberLines?.yes ?? '¡Claro! Apunta.', gloss: 'Sure! Write it down.' });
+      lines.push({ text: `${c.name}'s number was saved to your phone.` });
+      addContact(npcId);
+    } else if (rule.gives === 'after') {
+      lines.push({ who: 'npc', name, text: c.numberLines?.notYet ?? 'Mmm... todavía no.', gloss: 'Hmm... not yet.' });
+      lines.push({ who: 'omni', text: "Not yet. Keep chatting with them; trust takes a few conversations." });
+    } else {
+      lines.push({ who: 'npc', name, text: c.numberLines?.no ?? 'No, lo siento.', gloss: "No, sorry." });
+    }
+    await ui.say(lines);
+    save();
+    return lines;
   }
 
   private async arrive(): Promise<void> {
@@ -453,6 +541,9 @@ export class OverworldScene extends Phaser.Scene {
       }
       sfx.tier(tierRank(result.tier));
       state.xp += Math.round(tierRank(result.tier) * 5 + 10);
+      if (result.matched?.fix) learnPhrase(fillSlots(result.matched.fix, examples), result.matched.why ?? 'Correction', "Carmen's stall");
+      if (tierRank(result.tier) >= tierRank('natural')) learnPhrase(answer ?? '', 'Ordering at a market stall', "Carmen's stall");
+      if (result.better[0]) learnPhrase(fillSlots(result.better[0].text, examples), 'A more natural way to order', "Carmen's stall");
       await ui.result({
         tier: result.tier,
         headline: `"${answer}"`,
@@ -473,6 +564,7 @@ export class OverworldScene extends Phaser.Scene {
     state.items.churros += 2;
     state.coins += 5;
     state.flags.metCarmen = true;
+    addContact('carmen');
     save();
     ui.updateHud();
     ui.toast('+2 🥖 Churros');

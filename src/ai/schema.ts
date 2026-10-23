@@ -80,13 +80,17 @@ export const ChatTurnSchema = z.object({
 export type ChatTurnResult = z.infer<typeof ChatTurnSchema>;
 
 /** Why the server refused a turn; the game turns these into OMNI's lines. */
-export type LimitReason = 'sign_in_required' | 'free_limit' | 'plan_limit' | 'conversation_limit';
+export type LimitReason = 'sign_in_required' | 'no_signal' | 'conversation_limit';
 
 export interface QuotaStatus {
-  plan: 'free' | 'plus';
-  remaining: number;
+  plan: 'free' | 'basic' | 'premium';
+  /** Whole bars available now. */
+  signal: number;
+  capacity: number;
+  /** Battery-pack bars on top. */
   credits: number;
-  resetsAt: string;
+  /** When the next bar is ready, if the signal is empty. */
+  nextBarAt: string | null;
 }
 
 export type ChatResponse =
