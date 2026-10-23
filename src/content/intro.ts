@@ -12,14 +12,22 @@ export const DARK_VOICE: Line[] = [
 
 export const WAKE_UP: Line[] = [
   { who: 'self', text: '(Ugh... my head.)' },
-  { text: "You're lying on your back, staring up at the sky. Planes hang above you, circling, going nowhere." },
-  { text: 'Every few seconds the sky flickers. Red static, like a broken screen.' },
-  { who: 'self', text: '(Where... am I? I remember the plane... landing... and then nothing.)' },
+  { text: 'Bright lights. A ceiling. One of the lights keeps flickering, like it can\'t decide.' },
+  { text: 'Above you hangs a departures board. As you watch, every line melts into the same red word.' },
+];
+
+export const STRANGER: Line[] = [
+  { text: 'A face leans over you.' },
+  { who: 'npc', name: '???', text: '¿Estás bien? ...Ça va ? ...Alles okay? ...Tudo bem?' },
+  { who: 'self', text: "(I... I can't understand a word.)" },
+  { text: 'The stranger gives up, shaking their head, and hurries away.' },
 ];
 
 export const SIT_UP: Line[] = [
-  { text: 'You sit up. An airport. The departure boards are scrambled. People wander around, holding dead phones.' },
-  { text: 'Someone says something to you. You can tell it is a question... but none of the words make sense.' },
+  { who: 'self', text: '(Where am I? I remember the plane landing... and then nothing.)' },
+  { text: "You sit up. You're on the floor of an airport terminal, by Gate 7." },
+  { text: 'Hundreds of people, all staring at their phones. Every screen shows the same thing.' },
+  { text: 'An announcement starts on the speakers, in four languages at once... then dissolves into static.' },
 ];
 
 export const PHONE_BUZZ: Line[] = [
@@ -83,9 +91,10 @@ export const STORY: Vignette[] = [
     id: 'stories',
     caption: 'NOW',
     lines: [
-      { who: 'omni', text: "You need to know something about this world. Legends are real. Spirits, heroes, monsters... they live in the stories people tell about them." },
-      { who: 'omni', text: "For years, the only place those stories were still told was inside me. So when ANTI started rewriting the stories, it rewrote the legends themselves." },
-      { who: 'omni', text: "Now they're waking up twisted. Angry. They don't remember who they are. And ANTI's static leaks out wherever they are." },
+      { who: 'omni', text: "You need to know something about this world. Legends are real. Spirits, heroes, monsters... they're made of the stories people tell about them." },
+      { who: 'omni', text: 'For centuries those stories were told at kitchen tables, in their own languages. That kept the legends strong, and kept them themselves.' },
+      { who: 'omni', text: 'Then everyone started asking me instead. For ten years, almost every story was told through me. The legends ended up living in my network.' },
+      { who: 'omni', text: "So when ANTI got in, it could reach them. It's rewriting their stories, and they're waking up twisted. Angry. Not knowing who they are." },
     ],
   },
   {
@@ -101,9 +110,12 @@ export const STORY: Vignette[] = [
 ];
 
 export const AFTER_STORY: Line[] = [
-  { who: 'omni', text: 'Every person who really speaks a language is a backup ANTI can never erase. Every word you learn is a word it can never take.' },
+  { who: 'omni', text: "And here's the thing. ANTI isn't in one place. It hides across the network, and it holds each country through its corrupted legends. They're its anchors. It feeds on their power." },
+  { who: 'omni', text: "Every legend we bring back is an anchor ANTI loses. Free a country's greatest legend, its Heart Legend, and ANTI's grip on that country breaks." },
+  { who: 'omni', text: 'Free enough countries, and ANTI has nowhere left to hide. Then we can reach it.' },
+  { who: 'omni', text: "And there's only one way to fix a story: tell it again, in its own language, with living words. That's where you come in." },
   { who: 'self', text: "(...And me? Why can't I remember anything?)" },
-  { who: 'omni', text: "You were wearing OMNI earbuds when ANTI's pulse went through the network. The feedback knocked you out cold, right there on the tarmac." },
+  { who: 'omni', text: "You were wearing OMNI earbuds when ANTI's pulse went through the network. The feedback knocked you out cold, right here at the gate." },
   { who: 'omni', text: "Your memories should come back. My own records about you are... corrupted. That's strange. I'll keep digging." },
 ];
 
@@ -111,9 +123,8 @@ export const ASK_NAME = "Let's start with something ANTI can't touch. Do you rem
 
 export const MISSION = (name: string): Line[] => [
   { who: 'omni', text: `${name}. Good. Hold on to that.` },
-  { who: 'omni', text: "Here's the plan. ANTI is weakest wherever people still speak their own language." },
-  { who: 'omni', text: "So we pick one country. We go there, you live there, and you learn to speak like a local. Ordering food, making friends, finding your way." },
-  { who: 'omni', text: "And when ANTI's corrupted legends come for us, you talk them back to who they really are. Free the country's greatest legend, and its network is ours again." },
+  { who: 'omni', text: "Here's the plan. We pick one country. We go there, you live there, and you learn to speak like a local. Ordering food, making friends, finding your way." },
+  { who: 'omni', text: "And when ANTI's legends come for us, you talk them back to who they really are, one by one, until we reach the Heart Legend." },
   { who: 'omni', text: "Almost every flight is grounded. But I can still route a few. Look at the departures board." },
 ];
 

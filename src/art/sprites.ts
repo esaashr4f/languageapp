@@ -143,6 +143,13 @@ export const SPRITES: Record<string, SpriteDef> = {
   amina: villager(VILLAGER_ROWS, { h: '#2b1a12', t: '#c2255c', a: '#ffd43b', p: '#3b2a20', s: '#c68e67' }),
   fermin: villager(HAT_ROWS, { c: '#3b3560', t: '#6b4220', a: '#8a5a2b', p: '#2d2a4a', s: '#e0a98a' }),
   traveller: villager(VILLAGER_ROWS, { h: '#ffd43b', t: '#7048e8', a: '#b18cff', p: '#3b5bdb', s: '#f2c29b' }),
+  // Stranded passengers at the airport (nobody you'll meet again).
+  pax1: villager(VILLAGER_ROWS, { h: '#8a5a2b', t: '#2b8a3e', a: '#f1ecff', p: '#2d2a4a' }),
+  pax2: villager(VILLAGER_ROWS, { h: '#111111', t: '#e8590c', a: '#ffd8a8', p: '#343a40', s: '#a06a48' }),
+  pax3: villager(HAT_ROWS, { c: '#495057', t: '#364fc7', a: '#748ffc', p: '#212529' }),
+  pax4: villager(VILLAGER_ROWS, { h: '#e9ecef', t: '#862e9c', a: '#e599f7', p: '#495057', s: '#f2c29b' }),
+  pax5: villager(VILLAGER_ROWS, { h: '#5c3d2e', t: '#0b7285', a: '#99e9f2', p: '#343a40', s: '#7a4a32' }),
+  pax6: villager(HAT_ROWS, { c: '#c92a2a', t: '#f8f9fa', a: '#adb5bd', p: '#1864ab' }),
   cat: { rows: CAT_ROWS, palette: { o: OUTLINE, c: '#f59f00', e: '#2f9e44', p: '#ff6b9d' } },
   duende_true: {
     rows: DUENDE_ROWS,

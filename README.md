@@ -11,8 +11,9 @@ Duels) and a story mode share one profile.
 ## Prototype
 
 - **Title screen:** Story Mode, Casual Modes (coming soon), Log in / Profile.
-- **Story Mode opening:** a voice in the dark; you wake on your back under a glitching sky
-  at a stranded airport; OMNI calls from your pocket and explains everything in an
+- **Story Mode opening:** a voice in the dark; you wake on the floor of an airport gate,
+  under a departures board melting into ANTI; a stranger asks if you're okay in four
+  languages; you sit up among hundreds of stranded passengers; OMNI calls from your pocket and explains everything in an
   illustrated flashback; you give your name.
 - **Choosing a country:** a departures board. Only Madrid is open for now; OMNI warns that
   once you land, the borders lock until you free that country.
@@ -63,6 +64,7 @@ The EN chip toggles English subtitles.
 - `docs/gamification.md`: casual vs story mode, battles, food, coins, progression, build order
 - `docs/setup.md`: deploying on Vercel and turning on log-in (Supabase + providers)
 - `docs/ai-integration.md`: how Claude grades answers, voices characters, and plan limits
+- `docs/roadmap-30-languages.md`: what it takes to reach 30 countries at B2
 - `docs/monetisation.md`: proposal for energy (OMNI's signal), tiers and payments
 - `docs/characters.md`: every character's card (generated from `src/content/characters.ts`)
 - `docs/polyglot-game-design.md`: daily round, rarity tiers and grading

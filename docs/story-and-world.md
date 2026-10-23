@@ -8,30 +8,20 @@ own legends turn on you, and why English should come back at all.
 
 You don't get a menu of lore. You wake up inside it.
 
-1. **A voice in the dark.** Black screen, a voice with no name ("???"): "...can you hear
-   me? Please... you have to wake up."
-2. **Waking up.** The screen blinks open on a market in Madrid. You're lying on the stone
-   floor. Inner thoughts in italics: "Where... am I? I remember the plane... and then
-   nothing." It's strangely quiet; nobody is talking.
-3. **Your pocket buzzes.** Every app on your phone says ANTI in red, then a small glowing
-   face appears: OMNI. "Oh, thank goodness. You're awake!"
-4. **"Let me explain from the beginning."** A flashback in illustrated panels, narrated
-   by OMNI:
-   - *Ten years ago:* OMNI is built, the planet lit up by its network.
-   - *Every language:* people talking in every language through OMNI; it learns their
-     stories and legends too.
-   - *And then:* people stop learning languages, even English fades.
-   - *Three days ago:* data centre after data centre turns red. ANTI appears.
-   - *Last night:* ANTI erases English. The network links snap; the word ENGLISH glitches
-     away. The world turns into islands.
-   - *Now:* a book's words vanish and a legend climbs out, corrupted.
-   - *Your pocket:* OMNI hid a fragment of itself in your phone. "ANTI can delete data.
-     It can't delete what a person knows."
-5. **Why you can't remember.** You were wearing OMNI earbuds when ANTI's pulse went
-   through the network; the feedback knocked you out. Your recent memories are fuzzy, and
-   OMNI's records about you are strangely corrupted (a mystery thread for later: why were
-   you in Madrid, and why does ANTI seem interested in you?).
-6. **Your name** is the first thing ANTI can't touch. Then OMNI points you to Carmen.
+1. **A voice in the dark** ("???"): "...can you hear me? Please... you have to wake up."
+2. **Eyes open on an airport ceiling.** Fluorescent tubes, one dying. A departures board
+   hangs right above you; as you watch, every line melts into the same red word: ANTI.
+3. **A stranger leans over you** and asks if you're okay in four languages ("¿Estás bien?
+   ...Ça va ? ...Alles okay?"). You can't understand any of it. They give up and leave.
+4. **You sit up at Gate 7.** Hundreds of stranded passengers stare at phones that all say
+   ANTI; the PA starts an announcement in four languages and dissolves into static;
+   through the windows, planes sit on the runway going nowhere.
+5. **Your pocket buzzes.** OMNI: "Oh, thank goodness. You're awake!" Then the illustrated
+   flashback, the rules of the world, and your mission.
+6. **Why you can't remember:** the feedback from ANTI's pulse through your OMNI earbuds
+   knocked you out at the gate. OMNI's records about you are strangely corrupted
+   (a mystery for later).
+7. **Your name**, then the departures board, where you choose your country.
 
 ## 1. The backstory
 
@@ -66,32 +56,55 @@ Every human who really speaks a language is a living backup of it. That's why yo
 companion wants you to learn: each language you become fluent in is a language ANTI can
 never fully erase, and every bit of fluency weakens ANTI's grip on that country's network.
 
-## 3. The rules of ANTI and corruption
+## 3. The rules of the world
 
-These are fixed rules; every script and AI prompt should follow them.
+These are fixed rules; every script and AI prompt should follow them. Each one answers a
+"why" a player might ask.
 
-1. **Legends are real, and they are made of stories.** Spirits, heroes and monsters exist
-   in this world because people tell stories about them, in their language. A legend is
-   only as strong, and only as *itself*, as the stories told about it.
-2. **For ten years, OMNI was where the stories lived.** People stopped telling them to each
-   other; they asked OMNI. So every culture's legends became tied to OMNI's network.
-3. **ANTI only acts on the network.** It can scramble or delete digital text (signs,
-   apps, translations) and rewrite the stories stored in OMNI. Rewriting a legend's
-   stories corrupts the legend: it wakes up twisted, hostile, not knowing who it is.
-4. **ANTI cannot corrupt people.** Nobody in the world is corrupted. People are only cut
-   off: no English, no translation. Everyone you meet is a normal person with their own
-   opinions and moods.
-5. **ANTI cannot delete what a person knows.** Languages in people's heads are safe.
-6. **Glitch zones** are where a corrupted legend's static leaks into the world: lights
-   flicker, screens scramble, signs go blank. That's how you find legends.
-7. **Speaking restores.** Talking to a legend in its own language is telling its story
-   again, with living words, which overwrites ANTI's version. The better you speak, the
-   more of the story you restore. That's why bosses are beaten by conversation, and why
-   the Heart Legend needs a whole, real conversation.
-8. **Restored legends stay restored** and join you, because now their story lives in you
-   too.
+### Why are legends real, and why do they have power?
+1. **Legends are made of stories.** Spirits, heroes and monsters exist because people tell
+   stories about them, in their language. The more a story is told, the stronger the
+   legend, and the more it is *itself*. Their power is the weight of everyone who ever
+   told their story.
+2. **Normally they're quiet.** Legends mostly show themselves to people who speak to them
+   in their own language (grandmothers who leave a mandarin out for the duende).
 
-Open mysteries (for later acts): where ANTI came from, and why OMNI's records about the
+### Why can ANTI reach them?
+3. **OMNI became where the stories lived.** For ten years people stopped telling stories to
+   each other and asked OMNI instead: bedtime stories, folk tales, recipes, songs. The
+   legends' anchor moved from people's mouths into OMNI's network.
+4. **ANTI only acts on the network.** It can scramble digital text (signs, apps,
+   translations) and rewrite the stories stored in OMNI. Rewriting a legend's stories
+   corrupts the legend: it wakes up twisted, hostile, not knowing who it is.
+5. **ANTI cannot corrupt people, or delete what they know.** Nobody you meet is corrupted;
+   people are only cut off (no English, no translation). Languages in people's heads are safe.
+
+### Why do we have to turn legends back to reach ANTI?
+6. **Corrupted legends are ANTI's anchors.** ANTI has no single body; it is spread across
+   the network. It holds each country through that country's corrupted legends and feeds
+   on their power (that's why their static bleeds into the world as glitch zones).
+7. **Each restored legend is an anchor ANTI loses.** The Heart Legend is the root of a
+   country's network: restore it and ANTI's grip on that country breaks, and the borders
+   and networks open again.
+8. **When enough countries are free, ANTI has nowhere left to hide,** and its core becomes
+   reachable: the final act.
+
+### Why does speaking work?
+9. **You can't punch a story; you can only tell it again.** Talking to a legend in its own
+   language is retelling its story with living words, which overwrites ANTI's version. The
+   better you speak, the more of the story you restore. A Heart Legend carries a whole
+   culture's story, so restoring it takes a real conversation (independent speaker, B2).
+10. **Restored legends stay restored and join you,** because their story now lives in
+    someone's head again: yours, where ANTI can't reach.
+11. **Why their attacks hurt:** corrupted legends attack with ANTI's static, which scrambles
+    your words. (Idea: rename HP to **VOICE**: at zero you lose your words and OMNI has to
+    pull you out. Food restores your voice.)
+
+### Why can't we leave a country?
+12. **ANTI locks a country's network around the anchors it holds:** airports, trains and
+    borders run on the network. They reopen only when that country's Heart Legend is free.
+
+Open mysteries (later acts): where ANTI came from, and why OMNI's records about the
 player are corrupted.
 
 ## 4. Each country's final boss = conversational fluency
